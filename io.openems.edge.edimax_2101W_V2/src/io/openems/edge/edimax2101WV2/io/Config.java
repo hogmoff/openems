@@ -5,7 +5,7 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 @ObjectClassDefinition(//
 		name = "IO Edimax 2101W V2", //
-		description = "Implements a switching socket")
+		description = "Implements a switching socket with power meter")
 
 @interface Config {
 
