@@ -40,7 +40,7 @@ import io.openems.edge.meter.api.SymmetricMeter;
 				EventConstants.EVENT_TOPIC + "=" + EdgeEventConstants.TOPIC_CYCLE_EXECUTE_WRITE //
 		} //
 )
-public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOutput, SymmetricMeter, OpenemsComponent, EventHandler {
+public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOutput, OpenemsComponent, EventHandler {
 
 	private Edimax2101WV2Api edimax2101W_V2_api = null;
 	private final Logger log = LoggerFactory.getLogger(Edimax2101WV2.class);
