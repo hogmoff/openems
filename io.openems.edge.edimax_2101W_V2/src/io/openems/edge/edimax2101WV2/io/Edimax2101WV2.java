@@ -148,8 +148,8 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 		}
 		// set new values
 		this.getRelay1Channel().setNextValue(relay1ison);
-		this.getCurrent()._setNextValue(relay1current);
-		this.getActivePower()._setNextValue(relay1power);
+		this.getCurrent().setNextValue(relay1current);
+		this.getActivePower().setNextValue(relay1power);
 		
 	}
 
