@@ -114,6 +114,16 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 	private BooleanWriteChannel getRelay1Channel() {
 		return this.channel(EdimaxChannelID.RELAY_1);
 	}
+	
+	@Override
+	public Channel<Integer> getCurrent() {
+		return this.channel(EdimaxChannelID.CURRENT);
+	}
+	
+	@Override
+	public Channel<Integer> getActivePower() {
+		return this.channel(EdimaxChannelID.ACTIVE_POWER);
+	}
 
 	private StateChannel getSlaveCommunicationFailedChannel() {
 		return this.channel(EdimaxChannelID.SLAVE_COMMUNICATION_FAILED);
@@ -148,7 +158,7 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 		}
 		// set new values
 		this.getRelay1Channel().setNextValue(relay1ison);
-		//this.getCurrent().setNextValue(relay1current);
+		this.getCurrent().setNextValue(relay1current);
 		this.getActivePower().setNextValue(relay1power);
 		
 	}
