@@ -115,14 +115,12 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 		return this.channel(EdimaxChannelID.RELAY_1);
 	}
 	
-	@Override
-	public Channel<Integer> getCurrent() {
-		return this.channel(EdimaxChannelID.CURRENT);
+	private void setCurrent(Integer current) {
+		this.channel(EdimaxChannelID.CURRENT).setNextValue(current);
 	}
 	
-	@Override
-	public Channel<Integer> getActivePower() {
-		return this.channel(EdimaxChannelID.ACTIVE_POWER);
+	private void setActivePower(Integer power) {
+		this.channel(EdimaxChannelID.ACTIVE_POWER).setNextValue(power);
 	}
 
 	private StateChannel getSlaveCommunicationFailedChannel() {
@@ -158,8 +156,8 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 		}
 		// set new values
 		this.getRelay1Channel().setNextValue(relay1ison);
-		this.getCurrent().setNextValue(relay1current);
-		this.getActivePower().setNextValue(relay1power);
+		this.setCurrent(relay1current);
+		this.setActivePower(relay1power);
 		
 	}
 
