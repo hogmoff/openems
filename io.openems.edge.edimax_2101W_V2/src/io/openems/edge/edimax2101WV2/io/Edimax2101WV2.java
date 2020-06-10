@@ -116,11 +116,11 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 		return this.channel(EdimaxChannelID.RELAY_1);
 	}
 	
-	private IntegerReadChannel getCurrentChannel() {
+	public IntegerReadChannel getCurrentChannel() {
 		return this.channel(EdimaxChannelID.CURRENT);
 	}
 	
-	private IntegerReadChannel getActivePowerChannel() {
+	public IntegerReadChannel getActivePowerChannel() {
 		return this.channel(EdimaxChannelID.ACTIVE_POWER);
 	}
 
