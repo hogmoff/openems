@@ -1,0 +1,3 @@
+= io.openems.edge.predictor.solarradiationmodel
+
+https://github.com/OpenEMS/openems/tree/develop/io.openems.edge.predictor.solarradiationmodel[Source Code icon:github[]]
