@@ -96,7 +96,6 @@ public class Edimax2101WV2Api {
 		jsonObject.add("power", elementP);
 		
 		return jsonObject;
-
 	}
 
 
@@ -126,11 +125,8 @@ public class Edimax2101WV2Api {
 	 * @return a JsonObject or JsonArray
 	 * @throws OpenemsNamedException on error
 	 */
-	private Document sendPostRequest(String uri, String data) throws OpenemsException {
-		
-		
-		try {		
-			
+	private Document sendPostRequest(String uri, String data) throws OpenemsException {		
+		try {				
 			// Instantiate HttpClient
 			HttpClient httpClient = new HttpClient();
 			httpClient.start();

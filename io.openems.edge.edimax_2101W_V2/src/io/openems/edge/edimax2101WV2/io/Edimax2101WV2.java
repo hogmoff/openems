@@ -61,7 +61,6 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 	void activate(ComponentContext context, Config config) {
 		super.activate(context, config.id(), config.alias(), config.enabled());
 		this.edimax2101W_V2_api = new Edimax2101WV2Api(config.ip(), config.port(), config.realm(), config.user(), config.password());
-
 	}
 
 	@Deactivate
@@ -90,7 +89,7 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 			stateText = "?";
 		}		
 		b.append(stateText);	
-		b.append(" " + this.getActivePower().value().toString());
+		b.append(" " + this.getActivePower().toString());
 		return b.toString();
 	}
 
@@ -99,12 +98,10 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 		if (!this.isEnabled()) {
 			return;
 		}
-
 		switch (event.getTopic()) {
 		case EdgeEventConstants.TOPIC_CYCLE_BEFORE_PROCESS_IMAGE:
 			this.eventBeforeProcessImage();
 			break;
-
 		case EdgeEventConstants.TOPIC_CYCLE_EXECUTE_WRITE:
 			this.eventExecuteWrite();
 			break;
