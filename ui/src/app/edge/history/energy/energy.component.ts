@@ -124,7 +124,8 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
           for (let timestamp of result.timestamps) {
             labels.push(new Date(timestamp));
           }
-          this.labels = labels;
+          let indexLastLabel = labels.findIndex(this.getCurrentDate);
+          let LabelNow: Date = labels[indexLastLabel - 1];
 
           // convert datasets
           let datasets = [];
@@ -182,6 +183,46 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
               backgroundColor: 'rgba(45,143,171,0.05)',
               borderColor: 'rgba(45,143,171,1)'
             })
+          }
+          if ('predictorSolarradiation0/Predict00h' in result.data) {
+            let predictionData = result.data['predictorSolarradiation0/Predict00h'].map(value => {
+              if (value == null) {
+                return null
+              } else {
+                return value / 1000; // convert to kW
+              }
+            });
+            if (LabelNow) {
+              for (let TimeDiff = 1; TimeDiff <= 12; TimeDiff++) {
+                let dt: Date = new Date;
+                dt.setTime(LabelNow.getTime() + TimeDiff * (60 * 60 * 1000));
+                let dtEnd: Date = new Date(this.period.to.getFullYear(), this.period.to.getMonth(), this.period.to.getDate());
+                dtEnd.setDate(dtEnd.getDate() + 1);
+                if (dt < dtEnd) {
+                  let _predictionData = result.data['predictorSolarradiation0/Predict' + String(TimeDiff).padStart(2, '0') + 'h'].map(value => {
+                    if (value == null) {
+                      return null
+                    } else {
+                      return value / 1000; // convert to kW
+                    }
+                  });
+                  predictionData.push(_predictionData[indexLastLabel - 1]);
+                  if (labels.lastIndexOf(dt) < 0) labels.push(dt);
+                }
+              }
+            }
+            datasets.push({
+              label: 'Vorhersage',
+              data: predictionData,
+              hidden: false,
+              yAxisID: 'yAxis1',
+              position: 'left',
+              borderDash: [10, 10]
+            });
+            this.colors.push({
+              backgroundColor: 'rgba(45,143,171,0.05)',
+              borderColor: 'rgba(45,143,171,1)'
+            });
           }
 
           if ('_sum/GridActivePower' in result.data) {
@@ -315,6 +356,7 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
               borderColor: 'rgba(200,0,0,1)',
             })
           }
+          this.labels = labels;
           this.datasets = datasets;
           this.loading = false;
         }).catch(reason => {
@@ -353,7 +395,20 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
             case 'Production':
               result.push(
                 new ChannelAddress('_sum', 'ProductionActivePower'),
-                new ChannelAddress('_sum', 'ProductionDcActualPower'));
+                new ChannelAddress('_sum', 'ProductionDcActualPower'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict00h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict01h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict02h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict03h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict04h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict05h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict06h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict07h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict08h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict09h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict10h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict11h'),
+                new ChannelAddress('predictorSolarradiation0', 'Predict12h'));
               break;
           };
           return false;
