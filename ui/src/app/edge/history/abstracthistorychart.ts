@@ -124,11 +124,4 @@ export abstract class AbstractHistoryChart {
      * Sets Chart Height
      */
     protected abstract getChartHeight()
-
-    /**
-     * Get Current Date
-     */
-    public getCurrentDate(dates) {
-        return dates >= Date.now();
-    }
 }

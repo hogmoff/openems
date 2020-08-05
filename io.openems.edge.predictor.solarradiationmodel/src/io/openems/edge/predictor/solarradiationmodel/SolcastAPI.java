@@ -1,6 +1,7 @@
 package io.openems.edge.predictor.solarradiationmodel;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -10,6 +11,7 @@ import java.time.LocalTime;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import io.openems.common.exceptions.OpenemsError.OpenemsNamedException;
 import io.openems.common.exceptions.OpenemsException;
@@ -41,12 +43,12 @@ public class SolcastAPI {
 	public JsonArray getSolarForecast(int hours) throws OpenemsNamedException {
 		LocalTime current = LocalTime.now();
 		if (!LimitedAPI || (current.isAfter(starttime) && current.isBefore(endtime))) {
-			JsonObject json = this.sendGetRequest(this.Url);
+			//JsonObject json = this.sendGetRequest(this.Url);
 							
 			try {
-				//JsonParser parser = new JsonParser();
-				//Object obj = parser.parse(new FileReader("/Users/ottch/Downloads/forecasts.json"));
-				//JsonObject json = (JsonObject) obj;
+				JsonParser parser = new JsonParser();
+				Object obj = parser.parse(new FileReader("/Users/ottch/Downloads/forecasts.json"));
+				JsonObject json = (JsonObject) obj;
 				
 				JsonArray forecasts = (JsonArray) json.get("forecasts");			
 				JsonArray weather = new JsonArray();			

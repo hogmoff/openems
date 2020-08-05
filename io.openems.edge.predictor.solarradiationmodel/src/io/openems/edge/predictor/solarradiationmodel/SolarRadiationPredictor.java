@@ -118,9 +118,9 @@ public abstract class SolarRadiationPredictor extends AbstractOpenemsComponent i
 		}
 		else {
 			// add new Element with null and remove first element
-			this.hourlySolarData.pollFirstEntry();	
-			this.hourlySolarData_10.pollFirstEntry();	
-			this.hourlySolarData_90.pollFirstEntry();	
+			this.hourlySolarData.remove(this.hourlySolarData.firstKey());			
+			this.hourlySolarData_10.remove(this.hourlySolarData_10.firstKey());			
+			this.hourlySolarData_90.remove(this.hourlySolarData_90.firstKey());
 			this.hourlySolarData.put(LocalDateTime.now(), null);
 			this.hourlySolarData_10.put(LocalDateTime.now(), null);
 			this.hourlySolarData_90.put(LocalDateTime.now(), null);
