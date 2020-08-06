@@ -31,7 +31,7 @@ import io.openems.edge.meter.api.SymmetricMeter;
 
 @Designate(ocd = Config.class, factory = true)
 @Component(//
-		name = "edimax2101WV2", //
+		name = "IO.Edimax.SP-2101W", //
 		immediate = true, //
 		configurationPolicy = ConfigurationPolicy.REQUIRE, //
 		property = { //

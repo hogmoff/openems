@@ -1,4 +1,4 @@
-Bundle-Name: OpenEMS Edge io.openems.edge.edimax_2101W_V2
+Bundle-Name: OpenEMS Edge IO Edimax SP-2101W
 Bundle-Vendor: OpenEMS Association e.V.
 Bundle-License: https://opensource.org/licenses/EPL-2.0
 Bundle-Version: 1.0.0.${tstamp}
