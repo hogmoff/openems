@@ -1,4 +1,4 @@
-package io.openems.edge.edimax2101WV2.io;
+package io.openems.edge.io.edimax.sp2101W;
 
 import io.openems.common.channel.AccessMode;
 import io.openems.common.channel.Unit;

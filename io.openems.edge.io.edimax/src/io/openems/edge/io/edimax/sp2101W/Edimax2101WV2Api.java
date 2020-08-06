@@ -1,4 +1,4 @@
-package io.openems.edge.edimax2101WV2.io;
+package io.openems.edge.io.edimax.sp2101W;
 
 import java.io.StringReader;
 import java.net.URI;
