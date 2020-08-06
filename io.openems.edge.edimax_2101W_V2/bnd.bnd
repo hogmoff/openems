@@ -8,11 +8,10 @@ Bundle-Version: 1.0.0.${tstamp}
 	io.openems.common,\
 	io.openems.edge.common,\
 	io.openems.edge.io.api,\
+	io.openems.edge.meter.api,\
+	org.apache.felix.http.jetty,\
 	org.eclipse.jetty.client,\
 	org.eclipse.jetty.http,\
-	org.apache.felix.http.jetty,\
-	io.openems.edge.meter.api
 
 -testpath: \
 	${testpath}
--runfw: org.eclipse.osgi;version='[3.15.200.v20200214-1600,3.15.200.v20200214-1600]'
