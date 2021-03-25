@@ -9,6 +9,8 @@ export enum WidgetClass {
     'Grid',
     'Production',
     'Consumption',
+    'Stromerzeugung',
+    'Zusammenfassung',
 }
 
 export enum WidgetNature {
@@ -65,6 +67,10 @@ export class Widgets {
                     case 'Production':
                     case 'Selfconsumption':
                         return config.hasProducer();
+                    case 'Stromerzeugung':
+                        return true;
+                    case 'Zusammenfassung':
+                        return true;
                 };
                 return false;
             }).map(clazz => clazz.toString());

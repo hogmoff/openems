@@ -1,0 +1,22 @@
+<ng-container *ngIf="service.currentEdge | async as edge">
+    <ng-container *ngIf="edge.currentData | async as currentData">
+        <ion-card button (click)="presentModal()">
+            <ion-item lines="full" color="light">
+                <ion-avatar slot="start">
+                    <img src="assets/img/balkendiagramm.png">
+                </ion-avatar>
+                <ion-label translate>Stromerzeugung</ion-label>
+            </ion-item>
+            <!-- Woechentliche Zusammenfassung -->
+            <iframe
+                src="https://grafana.ott-christian.de/d-solo/vR9F4tQGk/openems-vorlage?orgId=1&theme=light&panelId=2"
+                width="450" height="200" frameborder="0">
+            </iframe>
+            <!-- Monatliche Zusammenfassung -->
+            <iframe
+                src="https://grafana.ott-christian.de/d-solo/vR9F4tQGk/openems-vorlage?orgId=1&theme=light&panelId=12"
+                width="450" height="200" frameborder="0">
+            </iframe>
+        </ion-card>
+    </ng-container>
+</ng-container>

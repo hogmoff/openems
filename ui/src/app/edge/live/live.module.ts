@@ -44,6 +44,10 @@ import { SinglethresholdComponent } from './singlethreshold/singlethreshold.comp
 import { SinglethresholdModalComponent } from './singlethreshold/modal/modal.component';
 import { StorageComponent } from './storage/storage.component';
 import { StorageModalComponent } from './storage/modal/modal.component';
+import { SummaryComponent } from './summary/summary.component';
+import { SummaryModalComponent } from './summary/modal/modal.component';
+import { SummaryTextComponent } from './summaryText/summaryText.component';
+import { SummaryTextModalComponent } from './summaryText/modal/modal.component';
 import { SymmetricPeakshavingComponent } from './peakshaving/symmetric/symmetricpeakshaving.component';
 import { SymmetricPeakshavingModalComponent } from './peakshaving/symmetric/modal/modal.component';
 import { TimeslotPeakshavingComponent } from './peakshaving/timeslot/timeslotpeakshaving.component';
@@ -76,6 +80,8 @@ import { TimeslotPeakshavingModalComponent } from './peakshaving/timeslot/modal/
     ProductionModalComponent,
     SelfconsumptionModalComponent,
     SinglethresholdModalComponent,
+    SummaryModalComponent,
+    SummaryTextModalComponent,
     StorageModalComponent,
     SymmetricPeakshavingModalComponent,
     TimeslotPeakshavingModalComponent,
@@ -123,6 +129,10 @@ import { TimeslotPeakshavingModalComponent } from './peakshaving/timeslot/modal/
     SinglethresholdModalComponent,
     StorageComponent,
     StorageModalComponent,
+    SummaryComponent,
+    SummaryModalComponent,
+    SummaryTextComponent,
+    SummaryTextModalComponent,
     SymmetricPeakshavingComponent,
     SymmetricPeakshavingModalComponent,
     TimeslotPeakshavingComponent,
