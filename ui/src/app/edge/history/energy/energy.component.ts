@@ -13,6 +13,8 @@ import { QueryHistoricTimeseriesExportXlxsRequest } from 'src/app/shared/jsonrpc
 import { Base64PayloadResponse } from 'src/app/shared/jsonrpc/response/base64PayloadResponse';
 import { queryHistoricTimeseriesEnergyPerPeriodResponse } from 'src/app/shared/jsonrpc/response/queryHistoricTimeseriesEnergyPerPeriodResponse';
 import { QueryHistoricTimeseriesEnergyResponse } from 'src/app/shared/jsonrpc/response/queryHistoricTimeseriesEnergyResponse';
+import { Get24HoursPredictionRequest } from "src/app//shared/jsonrpc/request/Get24HoursPredictionRequest";
+import { Get24HoursPredictionResponse } from "src/app//shared/jsonrpc/response/Get24HoursPredictionResponse";
 import { UnitvaluePipe } from 'src/app/shared/pipe/unitvalue/unitvalue.pipe';
 import { DefaultTypes } from 'src/app/shared/service/defaulttypes';
 import { QueryHistoricTimeseriesDataResponse } from '../../../shared/jsonrpc/response/queryHistoricTimeseriesDataResponse';
@@ -182,7 +184,7 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
       for (let timestamp of result.timestamps) {
         labels.push(new Date(timestamp));
       }
-      this.labels = labels;
+
 
       // convert datasets
       let datasets = [];
@@ -235,6 +237,43 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
           backgroundColor: 'rgba(45,143,171,0.05)',
           borderColor: 'rgba(45,143,171,1)'
         })
+
+        // Prediction
+        this.Get24HoursPredictions().then(response2 => {
+          let result2 = (response2 as Get24HoursPredictionResponse).result;
+          let predictionData = result2['predictorSolcast0/Predict'].map(value => {
+            if (value == null) {
+              return null
+            } else {
+              return value / 1000; // convert to kW
+            }
+          });
+
+          if (predictionData.length > 0) {
+
+            let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
+            let StartIndex = labels.indexOf(StartTime);
+
+            let newpredictionData: number[] = new Array(StartIndex - 1);
+            let newlabel = new Date(StartTime.getTime() + 15 * 60000);
+            let prodIndex = 0;
+            for (let i = StartIndex; i < labels.length; i++) {
+              if (labels[i].getTime() >= newlabel.getTime()) {
+                newlabel = new Date(newlabel.getTime() + 15 * 60000);
+                prodIndex++;
+              }
+              newpredictionData.push(predictionData[prodIndex]);
+            }
+
+            datasets.push({
+              label: 'Prediction',
+              data: newpredictionData,
+              hidden: false,
+              yAxisID: 'yAxis1',
+              position: 'left'
+            });
+          }
+        });
       }
 
       if ('_sum/GridActivePower' in result.data) {
@@ -368,6 +407,7 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
           borderColor: 'rgba(200,0,0,1)',
         })
       }
+      this.labels = labels;
       this.datasets = datasets;
       this.loading = false;
       this.service.stopSpinner(this.spinnerId);
@@ -464,6 +504,7 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
             stack: "PRODUCTION"
           });
         }
+
 
         // left stack
 

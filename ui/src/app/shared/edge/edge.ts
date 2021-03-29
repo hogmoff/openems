@@ -11,7 +11,8 @@ import { EdgeRpcRequest } from '../jsonrpc/request/edgeRpcRequest';
 import { environment as env } from '../../../environments';
 import { GetEdgeConfigRequest } from '../jsonrpc/request/getEdgeConfigRequest';
 import { GetEdgeConfigResponse } from '../jsonrpc/response/getEdgeConfigResponse';
-import { JsonrpcRequest, JsonrpcResponseSuccess } from '../jsonrpc/base';
+import { JsonrpcRequest, JsonrpcResponseSuccess, AbstractJsonrpcRequest } from '../jsonrpc/base';
+import { ComponentJsonApiRequest } from '../jsonrpc/request/componentJsonApiRequest';
 import { Role } from '../type/role';
 import { SubscribeChannelsRequest } from '../jsonrpc/request/subscribeChannelsRequest';
 import { SubscribeSystemLogRequest } from '../jsonrpc/request/subscribeSystemLogRequest';
@@ -19,6 +20,7 @@ import { SystemLog } from '../type/systemlog';
 import { SystemLogNotification } from '../jsonrpc/notification/systemLogNotification';
 import { UpdateComponentConfigRequest } from '../jsonrpc/request/updateComponentConfigRequest';
 import { Websocket } from '../service/websocket';
+import { Get24HoursPredictionRequest } from '../jsonrpc/request/Get24HoursPredictionRequest';
 
 export class Edge {
 
@@ -233,6 +235,30 @@ export class Edge {
           console.info("Response     [" + request.method + "]", response);
         }
         resolve(response['result']['payload']);
+      }).catch(reason => {
+        if (env.debugMode) {
+          console.warn("Request fail [" + request.method + "]", reason);
+        }
+        reject(reason);
+      });
+    });
+  }
+
+  /**
+   * Sends a JSON-RPC Request. The Request is wrapped in a EdgeRpcRequest.
+   * 
+   * @param ws               the Websocket
+   * @param request          the JSON-RPC Request
+   * @param responseCallback the JSON-RPC Response callback
+   */
+  public sendPredictorRequest(ws: Websocket, request: JsonrpcRequest, channelAddress: any): Promise<JsonrpcResponseSuccess> {
+    let wrap = request;
+    return new Promise((resolve, reject) => {
+      ws.sendRequest(wrap).then(response => {
+        if (env.debugMode) {
+          console.info("Response     [" + request.method + "]", response);
+        }
+        resolve(response);
       }).catch(reason => {
         if (env.debugMode) {
           console.warn("Request fail [" + request.method + "]", reason);

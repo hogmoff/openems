@@ -6,8 +6,11 @@ import { queryHistoricTimeseriesEnergyPerPeriodResponse } from 'src/app/shared/j
 import { JsonrpcResponseError } from "../../shared/jsonrpc/base";
 import { QueryHistoricTimeseriesDataRequest } from "../../shared/jsonrpc/request/queryHistoricTimeseriesDataRequest";
 import { QueryHistoricTimeseriesDataResponse } from "../../shared/jsonrpc/response/queryHistoricTimeseriesDataResponse";
+import { Get24HoursPredictionRequest } from "../../shared/jsonrpc/request/Get24HoursPredictionRequest";
+import { Get24HoursPredictionResponse } from "../../shared/jsonrpc/response/Get24HoursPredictionResponse";
 import { ChannelAddress, Edge, EdgeConfig, Service, Utils } from "../../shared/shared";
 import { ChartOptions, DEFAULT_TIME_CHART_OPTIONS, EMPTY_DATASET } from './shared';
+import { Component } from '@angular/core';
 
 // NOTE: Auto-refresh of widgets is currently disabled to reduce server load
 export abstract class AbstractHistoryChart {
@@ -110,6 +113,29 @@ export abstract class AbstractHistoryChart {
                         }
                     }).catch(reason => reject(reason));
                 })
+            });
+        });
+    }
+    /**
+     * Sends the get24hPrediction Request and makes sure the result is not empty.
+     * 
+     * @param edge     the current Edge
+     * @param ws       the websocket
+     */
+    protected Get24HoursPredictions(): Promise<Get24HoursPredictionResponse> {
+        return new Promise((resolve, reject) => {
+            this.service.getCurrentEdge().then(edge => {
+                let channelAddresses = [];
+                channelAddresses.push('predictorSolcast0/Predict');
+                let request = new Get24HoursPredictionRequest(channelAddresses);
+                edge.sendPredictorRequest(this.service.websocket, request, channelAddresses[0]).then(response => {
+                    let result = (response as Get24HoursPredictionResponse).result;
+                    if (Object.keys(result[channelAddresses[0]]).length != 0) {
+                        resolve(response as Get24HoursPredictionResponse);
+                    } else {
+                        reject(new JsonrpcResponseError(response.id, { code: 0, message: "Result was empty" }));
+                    }
+                }).catch(reason => reject(reason));
             });
         });
     }
