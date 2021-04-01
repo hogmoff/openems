@@ -14,6 +14,7 @@ import { AsymmetricPeakshavingChartOverviewComponent } from './edge/history/peak
 import { SymmetricPeakshavingChartOverviewComponent } from './edge/history/peakshaving/symmetric/symmetricpeakshavingchartoverview/symmetricpeakshavingchartoverview.component';
 import { TimeslotPeakshavingChartOverviewComponent } from './edge/history/peakshaving/timeslot/timeslotpeakshavingchartoverview/timeslotpeakshavingchartoverview.component';
 import { ProductionChartOverviewComponent } from './edge/history/production/productionchartoverview/productionchartoverview.component';
+import { PredictionChartOverviewComponent } from './edge/history/prediction/predictionchartoverview/predictionchartoverview.component';
 import { SelfconsumptionChartOverviewComponent } from './edge/history/selfconsumption/selfconsumptionchartoverview/selfconsumptionchartoverview.component';
 import { SinglethresholdChartOverviewComponent } from './edge/history/singlethreshold/singlethresholdchartoverview/singlethresholdchartoverview.component';
 import { StorageChartOverviewComponent } from './edge/history/storage/storagechartoverview/storagechartoverview.component';
@@ -59,6 +60,7 @@ const routes: Routes = [
   { path: 'device/:edgeId/history/productionchart', component: ProductionChartOverviewComponent },
   { path: 'device/:edgeId/history/selfconsumptionchart', component: SelfconsumptionChartOverviewComponent },
   { path: 'device/:edgeId/history/storagechart', component: StorageChartOverviewComponent },
+  { path: 'device/:edgeId/history/predictionchart', component: PredictionChartOverviewComponent },
 
   { path: 'device/:edgeId/settings', component: EdgeSettingsComponent },
   { path: 'device/:edgeId/settings/channels', component: EdgeSettingsChannelsComponent },

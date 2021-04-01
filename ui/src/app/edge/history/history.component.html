@@ -26,6 +26,9 @@
         <ion-col *ngSwitchCase="'Autarchy'" size="12" size-md="6" size-lg="4" size-xl="3">
           <autarchyWidget [period]="service.historyPeriod"></autarchyWidget>
         </ion-col>
+        <ion-col *ngSwitchCase="'Prediction'" size="12" size-md="6" size-lg="4" size-xl="3">
+          <predictionWidget [period]="service.historyPeriod"></predictionWidget>
+        </ion-col>
       </ng-container>
       <ng-container *ngFor="let widget of widgets.list" [ngSwitch]="widget.name">
         <ion-col size="12" size-md="6" size-lg="4" size-xl="3" *ngSwitchCase="'Controller.ChannelThreshold'">

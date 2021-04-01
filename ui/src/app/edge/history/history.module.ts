@@ -45,6 +45,9 @@ import { ProductionSingleChartComponent } from './production/singlechart';
 import { ProductionTotalAcChartComponent } from './production/totalacchart';
 import { ProductionTotalChartComponent } from './production/totalchart';
 import { ProductionTotalDcChartComponent } from './production/totaldcchart';
+import { PredictionChartOverviewComponent } from './prediction/predictionchartoverview/predictionchartoverview.component';
+import { PredictionComponent } from './prediction/widget.component';
+import { PredictionChartComponent } from './prediction/chart.component';
 import { SelfconsumptionChartComponent } from './selfconsumption/chart.component';
 import { SelfconsumptionChartOverviewComponent } from './selfconsumption/selfconsumptionchartoverview/selfconsumptionchartoverview.component';
 import { SelfconsumptionWidgetComponent } from './selfconsumption/widget.component';
@@ -120,6 +123,9 @@ import { TimeslotPeakshavingWidgetComponent } from './peakshaving/timeslot/widge
     ProductionTotalAcChartComponent,
     ProductionTotalChartComponent,
     ProductionTotalDcChartComponent,
+    PredictionChartOverviewComponent,
+    PredictionComponent,
+    PredictionChartComponent,
     SelfconsumptionChartComponent,
     SelfconsumptionChartOverviewComponent,
     SelfconsumptionWidgetComponent,

@@ -52,6 +52,7 @@ export const TRANSLATION = {
         phases: 'Phasen',
         power: 'Leistung',
         production: 'Erzeugung',
+        prediction: 'Vorhersage',
         rename: 'Umbenennen',
         reportValue: 'Fehlerhafte Daten melden',
         reset: 'Zurücksetzen',

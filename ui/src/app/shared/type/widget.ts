@@ -11,6 +11,7 @@ export enum WidgetClass {
     'Consumption',
     'Stromerzeugung',
     'Zusammenfassung',
+    'Prediction',
 }
 
 export enum WidgetNature {
@@ -70,6 +71,8 @@ export class Widgets {
                     case 'Stromerzeugung':
                         return true;
                     case 'Zusammenfassung':
+                        return true;
+                    case 'Prediction':
                         return true;
                 };
                 return false;
