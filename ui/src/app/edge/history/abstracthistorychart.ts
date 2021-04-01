@@ -127,8 +127,10 @@ export abstract class AbstractHistoryChart {
             this.service.getCurrentEdge().then(edge => {
                 let channelAddresses = [];
                 channelAddresses.push('predictorSolcast0/Predict');
+                channelAddresses.push('predictorSolcast0/Predict10');
+                channelAddresses.push('predictorSolcast0/Predict90');
                 let request = new Get24HoursPredictionRequest(channelAddresses);
-                edge.sendPredictorRequest(this.service.websocket, request, channelAddresses[0]).then(response => {
+                edge.sendPredictorRequest(this.service.websocket, request, channelAddresses).then(response => {
                     let result = (response as Get24HoursPredictionResponse).result;
                     if (Object.keys(result[channelAddresses[0]]).length != 0) {
                         resolve(response as Get24HoursPredictionResponse);

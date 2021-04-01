@@ -6,6 +6,7 @@ import { Data, TooltipItem } from '../shared';
 import { DefaultTypes } from 'src/app/shared/service/defaulttypes';
 import { formatNumber } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
+import { Get24HoursPredictionResponse } from "src/app//shared/jsonrpc/response/Get24HoursPredictionResponse";
 
 @Component({
     selector: 'predictionchart',
@@ -57,9 +58,9 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
 
             // required data for self consumption
             let productionData: number[] = [];
-            let predictionData: number[] = [];
-            let predictionData10: number[] = [];
-            let predictionData90: number[] = [];
+            let HistoricPredictionData: number[] = [];
+            let HistoricPredictionData10: number[] = [];
+            let HistoricPredictionData90: number[] = [];
 
             if ('_sum/ProductionActivePower' in result.data) {
                 /*
@@ -77,7 +78,7 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                 /*
                  * Prediction
                  */
-                predictionData = result.data['predictorSolcast0/Predict'].map(value => {
+                HistoricPredictionData = result.data['predictorSolcast0/Predict'].map(value => {
                     if (value == null) {
                         return null
                     } else {
@@ -90,7 +91,7 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                 /*
                  * Prediction 10
                  */
-                predictionData10 = result.data['predictorSolcast0/Predict10'].map(value => {
+                HistoricPredictionData10 = result.data['predictorSolcast0/Predict10'].map(value => {
                     if (value == null) {
                         return null
                     } else {
@@ -103,7 +104,7 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                 /*
                  * Prediction 90
                  */
-                predictionData90 = result.data['predictorSolcast0/Predict90'].map(value => {
+                HistoricPredictionData90 = result.data['predictorSolcast0/Predict90'].map(value => {
                     if (value == null) {
                         return null
                     } else {
@@ -111,6 +112,111 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                     }
                 });
             }
+
+            // Prediction
+            this.Get24HoursPredictions().then(response2 => {
+                let result2 = (response2 as Get24HoursPredictionResponse).result;
+                let predictionData = result2['predictorSolcast0/Predict'].map(value => {
+                    if (value == null) {
+                        return null
+                    } else {
+                        return value / 1000; // convert to kW
+                    }
+                });
+                let predictionData10 = result2['predictorSolcast0/Predict10'].map(value10 => {
+                    if (value10 == null) {
+                        return null
+                    } else {
+                        return value10 / 1000; // convert to kW
+                    }
+                });
+                let predictionData90 = result2['predictorSolcast0/Predict90'].map(value90 => {
+                    if (value90 == null) {
+                        return null
+                    } else {
+                        return value90 / 1000; // convert to kW
+                    }
+                });
+
+                if (predictionData.length > 0) {
+                    let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
+                    let StartIndex = labels.indexOf(StartTime);
+
+                    let newpredictionData: number[] = new Array(StartIndex - 1);
+                    let newlabel = new Date(StartTime.getTime() + 15 * 60000);
+                    let prodIndex = 0;
+                    for (let i = StartIndex; i < labels.length; i++) {
+                        if (labels[i].getTime() >= newlabel.getTime()) {
+                            newlabel = new Date(newlabel.getTime() + 15 * 60000);
+                            prodIndex++;
+                        }
+                        newpredictionData.push(predictionData[prodIndex]);
+                    }
+
+                    datasets.push({
+                        label: '24h ' + this.translate.instant('General.prediction'),
+                        data: newpredictionData,
+                        hidden: false,
+                        borderDash: [5, 5]
+                    });
+                    this.colors.push({
+                        backgroundColor: 'rgba(46,49,49,0.05)',
+                        borderColor: 'rgba(46,49,49,0.5)'
+                    })
+                }
+                if (predictionData10.length > 0) {
+                    let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
+                    let StartIndex = labels.indexOf(StartTime);
+
+                    let newpredictionData10: number[] = new Array(StartIndex - 1);
+                    let newlabel = new Date(StartTime.getTime() + 15 * 60000);
+                    let prodIndex = 0;
+                    for (let i = StartIndex; i < labels.length; i++) {
+                        if (labels[i].getTime() >= newlabel.getTime()) {
+                            newlabel = new Date(newlabel.getTime() + 15 * 60000);
+                            prodIndex++;
+                        }
+                        newpredictionData10.push(predictionData10[prodIndex]);
+                    }
+
+                    datasets.push({
+                        label: '24h ' + this.translate.instant('General.prediction') + ' 10',
+                        data: newpredictionData10,
+                        hidden: false,
+                        borderDash: [5, 5]
+                    });
+                    this.colors.push({
+                        backgroundColor: 'rgba(191,191,191,0.05)',
+                        borderColor: 'rgba(191,191,191,0.5)'
+                    })
+                }
+                if (predictionData90.length > 0) {
+                    let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
+                    let StartIndex = labels.indexOf(StartTime);
+
+                    let newpredictionData90: number[] = new Array(StartIndex - 1);
+                    let newlabel = new Date(StartTime.getTime() + 15 * 60000);
+                    let prodIndex = 0;
+                    for (let i = StartIndex; i < labels.length; i++) {
+                        if (labels[i].getTime() >= newlabel.getTime()) {
+                            newlabel = new Date(newlabel.getTime() + 15 * 60000);
+                            prodIndex++;
+                        }
+                        newpredictionData90.push(predictionData90[prodIndex]);
+                    }
+
+                    datasets.push({
+                        label: '24h ' + this.translate.instant('General.prediction') + ' 90',
+                        data: newpredictionData90,
+                        hidden: false,
+                        borderDash: [5, 5]
+                    });
+                    this.colors.push({
+                        backgroundColor: 'rgba(108,122,137,0.05)',
+                        borderColor: 'rgba(108,122,137,0.5)'
+                    })
+                }
+            });
 
             datasets.push({
                 label: this.translate.instant('General.production'),
@@ -123,7 +229,7 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
             });
             datasets.push({
                 label: this.translate.instant('General.prediction'),
-                data: predictionData,
+                data: HistoricPredictionData,
                 hidden: false
             })
             this.colors.push({
@@ -132,7 +238,7 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
             })
             datasets.push({
                 label: this.translate.instant('General.prediction') + ' 10',
-                data: predictionData10,
+                data: HistoricPredictionData10,
                 hidden: false,
                 borderDash: [10, 10]
             })
@@ -142,7 +248,7 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
             })
             datasets.push({
                 label: this.translate.instant('General.prediction') + ' 90',
-                data: predictionData90,
+                data: HistoricPredictionData90,
                 hidden: false,
                 borderDash: [10, 10]
             })
