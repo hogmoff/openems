@@ -122,6 +122,7 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 				this.channel(Evcs.ChannelId.ENERGY_SESSION).setNextValue(json.get("dws").getAsInt()*10/3600);
 			
 				this.channel(GoeChannelId.ERROR).setNextValue(err);
+				this.channel(Evcs.ChannelId.CHARGINGSTATION_COMMUNICATION_FAILED).setNextValue(false);
 				
 				this.setPower();
 				
