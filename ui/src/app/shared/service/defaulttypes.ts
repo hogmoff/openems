@@ -76,7 +76,10 @@ export module DefaultTypes {
       activePower: number,
       activePowerL1: number,
       activePowerL2: number,
-      activePowerL3: number
+      activePowerL3: number,
+      activePowerL1_Backup: number,
+      activePowerL2_Backup: number,
+      activePowerL3_Backup: number
     }
   }
 

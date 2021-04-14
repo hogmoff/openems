@@ -53,6 +53,43 @@
               </td>
             </tr>
           </table>
+          <!-- for spacing between Phases and Backup -->
+          <div
+            *ngIf="sum.activePowerL1_Backup != null && sum.activePowerL2_Backup != null && sum.activePowerL3_Backup != null"
+            style="padding-top: 5px;"></div>
+          <table class="full_width">
+            <tr>
+              <td style="width:65%" translate>General.backup</td>
+            </tr>
+          </table>
+          <!-- 3 Backup-Phases -->
+          <table class="full_width"
+            *ngIf="sum.activePowerL1_Backup != null && sum.activePowerL2_Backup != null && sum.activePowerL3_Backup != null">
+            <tr *ngIf="sum.activePowerL1_Backup != null">
+              <td style="width:2%"></td>
+              <td style="width:23%"><span translate>General.phase</span>&nbsp;L1</td>
+              <td style="width:40%"></td>
+              <td style="width:35%" class="align_right">
+                {{ sum.activePowerL1_Backup | unitvalue:'W' }}
+              </td>
+            </tr>
+            <tr *ngIf="sum.activePowerL2_Backup != null">
+              <td style="width:2%"></td>
+              <td style="width:23%"><span translate>General.phase</span>&nbsp;L2</td>
+              <td style="width:40%"></td>
+              <td class="align_right" style="width: 35%">
+                {{ sum.activePowerL2_Backup | unitvalue:'W' }}
+              </td>
+            </tr>
+            <tr *ngIf="sum.activePowerL3_Backup != null">
+              <td style="width:2%"></td>
+              <td style="width:23%"><span translate>General.phase</span>&nbsp;L3</td>
+              <td style="width:40%"></td>
+              <td class="align_right" style="width: 35%">
+                {{ sum.activePowerL3_Backup | unitvalue:'W' }}
+              </td>
+            </tr>
+          </table>
         </ion-card-content>
       </ng-container>
     </ng-container>

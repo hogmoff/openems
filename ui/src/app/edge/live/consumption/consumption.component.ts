@@ -51,6 +51,10 @@ export class ConsumptionComponent {
             new ChannelAddress(component.id, 'ChargePower'),
           )
         }
+        // Goodwe Backup Channels
+        channels.push(new ChannelAddress('ess0', 'BackUpPLoadR'))
+        channels.push(new ChannelAddress('ess0', 'BackUpPLoadS'))
+        channels.push(new ChannelAddress('ess0', 'BackUpPLoadT'))
       })
       this.edge.subscribeChannels(this.websocket, ConsumptionComponent.SELECTOR, channels);
     });

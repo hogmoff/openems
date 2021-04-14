@@ -22,6 +22,7 @@ import { ChannelAddress, Edge, EdgeConfig, Service, Utils, Websocket } from '../
 import { AbstractHistoryChart } from '../abstracthistorychart';
 import { ChartOptions, Data, DEFAULT_TIME_CHART_OPTIONS, TooltipItem } from './../shared';
 import { EnergyModalComponent } from './modal/modal.component';
+import { ThrowStmt } from '@angular/compiler';
 
 type EnergyChartLabels = {
   production: string,
@@ -248,8 +249,22 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
               return value / 1000; // convert to kW
             }
           });
+          let predictionData10 = result2['predictorSolcast0/Predict10'].map(value => {
+            if (value == null) {
+              return null
+            } else {
+              return value / 1000; // convert to kW
+            }
+          });
+          let predictionData90 = result2['predictorSolcast0/Predict90'].map(value => {
+            if (value == null) {
+              return null
+            } else {
+              return value / 1000; // convert to kW
+            }
+          });
 
-          if (predictionData.length > 0) {
+          if (predictionData.length > 0 && predictionData10.length > 0 && predictionData90.length > 0) {
 
             let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
             let StartIndex = labels.indexOf(StartTime);
@@ -266,12 +281,56 @@ export class EnergyComponent extends AbstractHistoryChart implements OnChanges {
             }
 
             datasets.push({
-              label: 'Prediction',
+              label: this.translate.instant('General.prediction'),
               data: newpredictionData,
               hidden: false,
               yAxisID: 'yAxis1',
-              position: 'left'
+              position: 'left',
+              borderDash: [5, 5]
             });
+            this.colors.push(this.predictColor)
+
+            let newpredictionData10: number[] = new Array(StartIndex - 1);
+            let newlabel10 = new Date(StartTime.getTime() + 15 * 60000);
+            prodIndex = 0;
+            for (let i = StartIndex; i < labels.length; i++) {
+              if (labels[i].getTime() >= newlabel10.getTime()) {
+                newlabel10 = new Date(newlabel10.getTime() + 15 * 60000);
+                prodIndex++;
+              }
+              newpredictionData10.push(predictionData10[prodIndex]);
+            }
+
+            datasets.push({
+              label: this.translate.instant('General.prediction') + ' 10',
+              data: newpredictionData10,
+              hidden: false,
+              yAxisID: 'yAxis1',
+              position: 'left',
+              borderDash: [5, 5]
+            });
+            this.colors.push(this.predict10Color)
+
+            let newpredictionData90: number[] = new Array(StartIndex - 1);
+            let newlabel90 = new Date(StartTime.getTime() + 15 * 60000);
+            prodIndex = 0;
+            for (let i = StartIndex; i < labels.length; i++) {
+              if (labels[i].getTime() >= newlabel90.getTime()) {
+                newlabel90 = new Date(newlabel90.getTime() + 15 * 60000);
+                prodIndex++;
+              }
+              newpredictionData90.push(predictionData90[prodIndex]);
+            }
+
+            datasets.push({
+              label: this.translate.instant('General.prediction') + ' 90',
+              data: newpredictionData90,
+              hidden: false,
+              yAxisID: 'yAxis1',
+              position: 'left',
+              borderDash: [5, 5]
+            });
+            this.colors.push(this.predict90Color)
           }
         });
       }

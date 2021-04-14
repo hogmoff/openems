@@ -68,7 +68,10 @@ export class CurrentData {
         activePower: null,
         activePowerL1: null,
         activePowerL2: null,
-        activePowerL3: null
+        activePowerL3: null,
+        activePowerL1_Backup: null,
+        activePowerL2_Backup: null,
+        activePowerL3_Backup: null
       }
     };
 
@@ -200,6 +203,9 @@ export class CurrentData {
       result.consumption.activePowerL1 = c['_sum/ConsumptionActivePowerL1'];
       result.consumption.activePowerL2 = c['_sum/ConsumptionActivePowerL2'];
       result.consumption.activePowerL3 = c['_sum/ConsumptionActivePowerL3'];
+      result.consumption.activePowerL1_Backup = c['ess0/BackUpPLoadR'];
+      result.consumption.activePowerL2_Backup = c['ess0/BackUpPLoadS'];
+      result.consumption.activePowerL3_Backup = c['ess0/BackUpPLoadT'];
       let consumptionMaxActivePower = c['_sum/ConsumptionMaxActivePower'];
       if (!consumptionMaxActivePower) {
         consumptionMaxActivePower = 10000;

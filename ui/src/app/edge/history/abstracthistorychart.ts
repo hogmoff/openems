@@ -47,6 +47,20 @@ export abstract class AbstractHistoryChart {
         borderColor: 'rgba(128,128,0,1)',
     }
 
+    // Colors for Prediction
+    protected predictColor = {
+        backgroundColor: 'rgba(46,49,49,0.05)',
+        borderColor: 'rgba(46,49,49,1)'
+    }
+    protected predict10Color = {
+        backgroundColor: 'rgba(191,191,191,0.05)',
+        borderColor: 'rgba(191,191,191,1)'
+    }
+    protected predict90Color = {
+        backgroundColor: 'rgba(108,122,137,0.05)',
+        borderColor: 'rgba(108,122,137,1)'
+    }
+
     constructor(
         protected service: Service,
         protected translate: TranslateService

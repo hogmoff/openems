@@ -159,10 +159,7 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                         hidden: false,
                         borderDash: [5, 5]
                     });
-                    this.colors.push({
-                        backgroundColor: 'rgba(46,49,49,0.05)',
-                        borderColor: 'rgba(46,49,49,0.5)'
-                    })
+                    this.colors.push(this.predictColor)
                 }
                 if (predictionData10.length > 0) {
                     let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
@@ -185,10 +182,7 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                         hidden: false,
                         borderDash: [5, 5]
                     });
-                    this.colors.push({
-                        backgroundColor: 'rgba(191,191,191,0.05)',
-                        borderColor: 'rgba(191,191,191,0.5)'
-                    })
+                    this.colors.push(this.predict10Color)
                 }
                 if (predictionData90.length > 0) {
                     let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
@@ -211,10 +205,7 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                         hidden: false,
                         borderDash: [5, 5]
                     });
-                    this.colors.push({
-                        backgroundColor: 'rgba(108,122,137,0.05)',
-                        borderColor: 'rgba(108,122,137,0.5)'
-                    })
+                    this.colors.push(this.predict90Color)
                 }
             });
 
@@ -232,30 +223,24 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                 data: HistoricPredictionData,
                 hidden: false
             })
-            this.colors.push({
-                backgroundColor: 'rgba(46,49,49,0.05)',
-                borderColor: 'rgba(46,49,49,1)'
-            })
+            this.colors.push(this.predictColor);
+
             datasets.push({
                 label: this.translate.instant('General.prediction') + ' 10',
                 data: HistoricPredictionData10,
                 hidden: false,
                 borderDash: [10, 10]
             })
-            this.colors.push({
-                backgroundColor: 'rgba(191,191,191,0.05)',
-                borderColor: 'rgba(191,191,191,1)'
-            })
+            this.colors.push(this.predict10Color);
+
             datasets.push({
                 label: this.translate.instant('General.prediction') + ' 90',
                 data: HistoricPredictionData90,
                 hidden: false,
                 borderDash: [10, 10]
             })
-            this.colors.push({
-                backgroundColor: 'rgba(108,122,137,0.05)',
-                borderColor: 'rgba(108,122,137,1)'
-            })
+            this.colors.push(this.predict90Color);
+
             this.service.stopSpinner(this.spinnerId);
             this.datasets = datasets;
             this.loading = false;

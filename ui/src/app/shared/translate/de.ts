@@ -5,6 +5,7 @@ export const TRANSLATION = {
         apply: 'Übernehmen',
         autarchy: 'Autarkie',
         automatic: 'Automatisch',
+        backup: 'Backup',
         cancel: 'abbrechen',
         capacity: 'Kapazität',
         changeAccepted: 'Änderung übernommen',
