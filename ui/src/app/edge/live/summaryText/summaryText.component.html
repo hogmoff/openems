@@ -1,0 +1,32 @@
+<ng-container *ngIf="service.currentEdge | async as edge">
+    <ng-container *ngIf="edge.currentData | async as currentData">
+        <ion-card button (click)="presentModal()">
+            <ion-item lines="full" color="light">
+                <ion-avatar slot="start">
+                    <img src="assets/img/pie-chart.png">
+                </ion-avatar>
+                <ion-label translate>Zusammenfassung</ion-label>
+            </ion-item>
+            <!-- Heutige Produktion -->
+            <iframe
+                src="https://grafana.ott-christian.de/d-solo/vR9F4tQGk/openems-vorlage?orgId=1&theme=light&panelId=4"
+                width="200" height="200" frameborder="0">
+            </iframe>
+            <!-- Monats-Produktion -->
+            <iframe
+                src="https://grafana.ott-christian.de/d-solo/vR9F4tQGk/openems-vorlage?orgId=1&theme=light&panelId=6"
+                width="200" height="200" frameborder="0">
+            </iframe>
+            <!-- Jahres-Produktion -->
+            <iframe
+                src="https://grafana.ott-christian.de/d-solo/vR9F4tQGk/openems-vorlage?orgId=1&theme=light&panelId=8"
+                width="200" height="200" frameborder="0">
+            </iframe>
+            <!-- Gesamt-Produktion -->
+            <iframe
+                src="https://grafana.ott-christian.de/d-solo/vR9F4tQGk/openems-vorlage?orgId=1&theme=light&panelId=10"
+                width="200" height="200" frameborder="0">
+            </iframe>
+        </ion-card>
+    </ng-container>
+</ng-container>

@@ -1,0 +1,141 @@
+package io.openems.edge.evcs.goe.chargerhome;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import io.openems.common.exceptions.OpenemsError.OpenemsNamedException;
+import io.openems.common.exceptions.OpenemsException;
+import io.openems.common.utils.JsonUtils;
+
+public class GoeAPI {
+	
+	private final String IP;
+	private boolean debugMode;
+	private String debugFile;
+	private int executeEveryCycle;
+	private int cycle;
+	private JsonObject jsonStatus;
+
+	public GoeAPI(String ip, boolean debugMode, String debugFile, int StatusAfterCycles) {
+		this.IP = ip;
+		this.debugMode = debugMode;
+		this.debugFile = debugFile;
+		this.cycle = 0;
+		this.executeEveryCycle = StatusAfterCycles;
+		this.jsonStatus = null;
+	}
+
+	/**
+	 * Gets the status from go-e
+	 * 
+	 * See https://github.com/goecharger
+	 * 
+	 * @return the boolean value
+	 * @throws OpenemsNamedException on error
+	 */
+	public JsonObject getStatus() {
+			
+		try {
+			// Execute every x-Cycle
+			if (this.cycle == 0 || this.cycle % this.executeEveryCycle == 0) {
+				JsonObject json = new JsonObject();
+				if (!debugMode) {
+					String URL = "http://" + this.IP + "/status";
+					json = this.sendRequest(URL, "GET");
+				}						
+			
+				if (debugMode) {
+					JsonParser parser = new JsonParser();
+					Object obj = parser.parse(new FileReader(debugFile));
+					json = (JsonObject) obj;
+				}										
+				
+				this.cycle = 1;
+				this.jsonStatus = json;
+				return json;		
+			}
+			else {
+				this.cycle++;
+				return this.jsonStatus;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/** Sets the Current in Ampere for go-e
+	 * 
+	 * See https://github.com/goecharger
+	 * 
+	 * @return JsonObject with new settings
+	 * @throws OpenemsNamedException on error
+	 */
+	public JsonObject setCurrent(int current) {
+			
+		try {
+			JsonObject json = new JsonObject();
+			if (!debugMode) {
+				Integer CurrentAmpere = current / 1000;
+				String URL = "http://" + this.IP + "/mqtt?payload=amp=" + Integer.toString(CurrentAmpere);
+				json = this.sendRequest(URL, "PUT");
+				return json;
+			}		
+			else {
+				return this.getStatus();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/**
+	 * Sends a get or set request to the go-e API.
+	 * 
+	 * @param endpoint the REST Api endpoint
+	 * @return a JsonObject or JsonArray
+	 * @throws OpenemsNamedException on error
+	 */
+	private JsonObject sendRequest(String URL, String Requestmethod) throws OpenemsNamedException {
+		try {
+			URL url = new URL(URL);
+			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod(Requestmethod);
+			con.setConnectTimeout(5000);
+			con.setReadTimeout(5000);
+			int status = con.getResponseCode();
+			String body;
+			try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+				// Read HTTP response
+				StringBuilder content = new StringBuilder();
+				String line;
+				while ((line = in.readLine()) != null) {
+					content.append(line);
+					content.append(System.lineSeparator());
+				}
+				body = content.toString();
+			}
+			if (status < 300) {
+				// Parse response to JSON
+				return JsonUtils.parseToJsonObject(body);
+			} else {
+				throw new OpenemsException(
+						"Error while reading from go-e API. Response code: " + status + ". " + body);
+			}
+		} catch (OpenemsNamedException | IOException e) {
+			throw new OpenemsException(
+					"Unable to read from go-e API. " + e.getClass().getSimpleName() + ": " + e.getMessage());
+		}
+	}
+	
+}

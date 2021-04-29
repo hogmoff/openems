@@ -8,6 +8,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.java_websocket.WebSocket;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,7 @@ import io.openems.common.websocket.SubscribedChannelsWorker;
 import io.openems.edge.common.component.OpenemsComponent;
 import io.openems.edge.common.jsonapi.JsonApi;
 import io.openems.edge.common.user.EdgeUser;
+import io.openems.edge.predictor.api.manager.PredictorManager;
 
 public class OnRequest implements io.openems.common.websocket.OnRequest {
 
@@ -50,8 +52,11 @@ public class OnRequest implements io.openems.common.websocket.OnRequest {
 	private final WebsocketApi parent;
 
 	public OnRequest(WebsocketApi parent) {
-		this.parent = parent;
+		this.parent = parent;		
 	}
+	
+	@Reference
+	protected PredictorManager predictorManager;
 
 	@Override
 	public CompletableFuture<? extends JsonrpcResponseSuccess> run(WebSocket ws, JsonrpcRequest request)
@@ -67,11 +72,20 @@ public class OnRequest implements io.openems.common.websocket.OnRequest {
 		// is user authenticated?
 		EdgeUser user = wsData.assertUserIsAuthenticated(request.getMethod());
 		user.assertRoleIsAtLeast(request.getMethod(), Role.GUEST);
-
-		switch (request.getMethod()) {
+				
+		switch (request.getMethod()) {		
 
 		case EdgeRpcRequest.METHOD:
 			return this.handleEdgeRpcRequest(wsData, user, EdgeRpcRequest.from(request));
+			
+		case PredictorManager.METHOD:
+			try {
+				PredictorManager predictorManager = parent.componentManager.getComponent("_predictorManager");
+				return predictorManager.handleJsonrpcRequest(user, request);
+			} catch (OpenemsNamedException e) {
+				this.predictorManager = null;
+			}
+			
 
 		default:
 			this.parent.logWarn(this.log, "Unhandled Request: " + request);
@@ -183,7 +197,7 @@ public class OnRequest implements io.openems.common.websocket.OnRequest {
 		this.parent.sessionTokens.put(wsData.getSessionToken(), user);
 		// TODO unset on logout!
 		return CompletableFuture.completedFuture(new AuthenticateWithPasswordResponse(request.getId(),
-				wsData.getSessionToken(), Utils.getEdgeMetadata(user.getRole())));
+				wsData.getSessionToken().toString(), Utils.getEdgeMetadata(user.getRole())));
 	}
 
 	/**
