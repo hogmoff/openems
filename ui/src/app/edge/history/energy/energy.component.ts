@@ -13,8 +13,8 @@ import { QueryHistoricTimeseriesExportXlxsRequest } from 'src/app/shared/jsonrpc
 import { Base64PayloadResponse } from 'src/app/shared/jsonrpc/response/base64PayloadResponse';
 import { queryHistoricTimeseriesEnergyPerPeriodResponse } from 'src/app/shared/jsonrpc/response/queryHistoricTimeseriesEnergyPerPeriodResponse';
 import { QueryHistoricTimeseriesEnergyResponse } from 'src/app/shared/jsonrpc/response/queryHistoricTimeseriesEnergyResponse';
-import { Get24HoursPredictionRequest } from "src/app//shared/jsonrpc/request/Get24HoursPredictionRequest";
-import { Get24HoursPredictionResponse } from "src/app//shared/jsonrpc/response/Get24HoursPredictionResponse";
+import { Get24HoursPredictionRequest } from "src/app//shared/jsonrpc/request/get24HoursPredictionRequest";
+import { Get24HoursPredictionResponse } from "src/app//shared/jsonrpc/response/get24HoursPredictionResponse";
 import { UnitvaluePipe } from 'src/app/shared/pipe/unitvalue/unitvalue.pipe';
 import { DefaultTypes } from 'src/app/shared/service/defaulttypes';
 import { QueryHistoricTimeseriesDataResponse } from '../../../shared/jsonrpc/response/queryHistoricTimeseriesDataResponse';

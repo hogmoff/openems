@@ -20,7 +20,7 @@ import { SystemLog } from '../type/systemlog';
 import { SystemLogNotification } from '../jsonrpc/notification/systemLogNotification';
 import { UpdateComponentConfigRequest } from '../jsonrpc/request/updateComponentConfigRequest';
 import { Websocket } from '../service/websocket';
-import { Get24HoursPredictionRequest } from '../jsonrpc/request/Get24HoursPredictionRequest';
+import { Get24HoursPredictionRequest } from '../jsonrpc/request/get24HoursPredictionRequest';
 
 export class Edge {
 

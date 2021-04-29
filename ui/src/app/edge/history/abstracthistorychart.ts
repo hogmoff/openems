@@ -6,8 +6,8 @@ import { queryHistoricTimeseriesEnergyPerPeriodResponse } from 'src/app/shared/j
 import { JsonrpcResponseError } from "../../shared/jsonrpc/base";
 import { QueryHistoricTimeseriesDataRequest } from "../../shared/jsonrpc/request/queryHistoricTimeseriesDataRequest";
 import { QueryHistoricTimeseriesDataResponse } from "../../shared/jsonrpc/response/queryHistoricTimeseriesDataResponse";
-import { Get24HoursPredictionRequest } from "../../shared/jsonrpc/request/Get24HoursPredictionRequest";
-import { Get24HoursPredictionResponse } from "../../shared/jsonrpc/response/Get24HoursPredictionResponse";
+import { Get24HoursPredictionRequest } from "../../shared/jsonrpc/request/get24HoursPredictionRequest";
+import { Get24HoursPredictionResponse } from "../../shared/jsonrpc/response/get24HoursPredictionResponse";
 import { ChannelAddress, Edge, EdgeConfig, Service, Utils } from "../../shared/shared";
 import { ChartOptions, DEFAULT_TIME_CHART_OPTIONS, EMPTY_DATASET } from './shared';
 import { Component } from '@angular/core';

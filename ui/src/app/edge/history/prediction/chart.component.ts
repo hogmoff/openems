@@ -6,7 +6,7 @@ import { Data, TooltipItem } from '../shared';
 import { DefaultTypes } from 'src/app/shared/service/defaulttypes';
 import { formatNumber } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
-import { Get24HoursPredictionResponse } from "src/app//shared/jsonrpc/response/Get24HoursPredictionResponse";
+import { Get24HoursPredictionResponse } from "src/app//shared/jsonrpc/response/get24HoursPredictionResponse";
 
 @Component({
     selector: 'predictionchart',
