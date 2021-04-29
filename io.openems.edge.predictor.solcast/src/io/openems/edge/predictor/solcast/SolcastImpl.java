@@ -2,8 +2,8 @@ package io.openems.edge.predictor.solcast;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -42,10 +42,11 @@ import io.openems.edge.predictor.api.oneday.Predictor24Hours;
 		} //
 )
 public class SolcastImpl extends AbstractPredictor24Hours implements Predictor24Hours, OpenemsComponent, EventHandler {
+	
+	private final Logger log = LoggerFactory.getLogger(SolcastImpl.class);
 
 	private SolcastAPI solarforcastAPI = null; 
-	private boolean executed;
-	private final Logger log = LoggerFactory.getLogger(SolcastImpl.class);
+	private boolean executed;	
 	LocalDateTime prevHour = LocalDateTime.now();
 	private TreeMap<LocalDateTime, Integer> hourlySolarData_00 = new TreeMap<LocalDateTime, Integer>();
 	private TreeMap<LocalDateTime, Integer> hourlySolarData_10 = new TreeMap<LocalDateTime, Integer>();
