@@ -1,14 +1,12 @@
 import { BehaviorSubject, Subject } from 'rxjs';
-import { ChannelAddress } from '../type/channeladdress';
 import { cmp } from 'semver-compare-multi';
-import { CreateComponentConfigRequest } from '../jsonrpc/request/createComponentConfigRequest';
-import { CurrentData } from './currentdata';
+import { JsonrpcRequest, JsonrpcResponseSuccess } from '../jsonrpc/base';
 import { CurrentDataNotification } from '../jsonrpc/notification/currentDataNotification';
-import { DeleteComponentConfigRequest } from '../jsonrpc/request/deleteComponentConfigRequest';
-import { EdgeConfig } from './edgeconfig';
 import { EdgeConfigNotification } from '../jsonrpc/notification/edgeConfigNotification';
+import { SystemLogNotification } from '../jsonrpc/notification/systemLogNotification';
+import { CreateComponentConfigRequest } from '../jsonrpc/request/createComponentConfigRequest';
+import { DeleteComponentConfigRequest } from '../jsonrpc/request/deleteComponentConfigRequest';
 import { EdgeRpcRequest } from '../jsonrpc/request/edgeRpcRequest';
-import { environment as env } from '../../../environments';
 import { GetEdgeConfigRequest } from '../jsonrpc/request/getEdgeConfigRequest';
 import { GetEdgeConfigResponse } from '../jsonrpc/response/getEdgeConfigResponse';
 import { JsonrpcRequest, JsonrpcResponseSuccess, AbstractJsonrpcRequest } from '../jsonrpc/base';
@@ -16,11 +14,14 @@ import { ComponentJsonApiRequest } from '../jsonrpc/request/componentJsonApiRequ
 import { Role } from '../type/role';
 import { SubscribeChannelsRequest } from '../jsonrpc/request/subscribeChannelsRequest';
 import { SubscribeSystemLogRequest } from '../jsonrpc/request/subscribeSystemLogRequest';
-import { SystemLog } from '../type/systemlog';
-import { SystemLogNotification } from '../jsonrpc/notification/systemLogNotification';
 import { UpdateComponentConfigRequest } from '../jsonrpc/request/updateComponentConfigRequest';
+import { GetEdgeConfigResponse } from '../jsonrpc/response/getEdgeConfigResponse';
 import { Websocket } from '../service/websocket';
-import { Get24HoursPredictionRequest } from '../jsonrpc/request/get24HoursPredictionRequest';
+import { ChannelAddress } from '../type/channeladdress';
+import { Role } from '../type/role';
+import { SystemLog } from '../type/systemlog';
+import { CurrentData } from './currentdata';
+import { EdgeConfig } from './edgeconfig';
 
 export class Edge {
 
@@ -107,6 +108,17 @@ export class Edge {
   }
 
   /**
+   * Refreshes Channels subscriptions on websocket reconnect.
+   * 
+   * @param websocket the Websocket
+   */
+  public subscribeChannelsOnReconnect(websocket: Websocket): void {
+    if (Object.keys(this.subscribedChannels).length > 0) {
+      this.sendSubscribeChannels(websocket);
+    }
+  }
+
+  /**
    * Removes Channels from subscription
    * 
    * @param websocket the Websocket
@@ -140,7 +152,7 @@ export class Edge {
    * 
    * @param websocket the Websocket
    */
-  public sendSubscribeChannels(websocket: Websocket): void {
+  private sendSubscribeChannels(websocket: Websocket): void {
     // make sure to send not faster than every 100 ms
     if (this.subscribeChannelsTimeout == null) {
       this.subscribeChannelsTimeout = setTimeout(() => {
@@ -231,14 +243,8 @@ export class Edge {
     let wrap = new EdgeRpcRequest({ edgeId: this.id, payload: request });
     return new Promise((resolve, reject) => {
       ws.sendRequest(wrap).then(response => {
-        if (env.debugMode) {
-          console.info("Response     [" + request.method + "]", response);
-        }
         resolve(response['result']['payload']);
       }).catch(reason => {
-        if (env.debugMode) {
-          console.warn("Request fail [" + request.method + "]", reason);
-        }
         reject(reason);
       });
     });
