@@ -5,7 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import io.openems.common.exceptions.OpenemsError.OpenemsNamedException;
 import io.openems.common.jsonrpc.base.JsonrpcRequest;
 import io.openems.common.jsonrpc.base.JsonrpcResponseSuccess;
-import io.openems.common.session.User;
+import io.openems.edge.common.user.User;
 import io.openems.common.types.ChannelAddress;
 import io.openems.edge.common.channel.Doc;
 import io.openems.edge.common.component.OpenemsComponent;
