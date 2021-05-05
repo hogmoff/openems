@@ -70,7 +70,7 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 		this.MaxCurrent = config.maxHwCurrent();
 
 		// start api-Worker
-		goeapi = new GoeAPI(config.ip(), false, "", config.StatusAfterCycles()); //true, "/Users/ottch/Downloads/status.json");
+		goeapi = new GoeAPI(config.ip(), false, "", config.StatusAfterCycles());
 
 
 	}
@@ -138,13 +138,13 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 	private int ConvertGoeStatus(int status) {
 		switch(status) {
 		case 1: // ready for charging, car unplugged
-			return Status.READY_FOR_CHARGING.getValue(); // ready for charging
+			return Status.NOT_READY_FOR_CHARGING.getValue();
 		case 2: // charging
-			return Status.CHARGING.getValue(); // Charging
+			return Status.CHARGING.getValue();
 		case 3: // waiting for car
-			return Status.READY_FOR_CHARGING.getValue(); // ready for charging
+			return Status.READY_FOR_CHARGING.getValue(); 
 		case 4: // charging finished, car plugged
-			return Status.CHARGING_FINISHED.getValue(); // charging finished
+			return Status.CHARGING_FINISHED.getValue();
 		default:
 			return Status.UNDEFINED.getValue();
 		}
@@ -152,9 +152,9 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 	
 	private int ConvertGoePhase(int phase) {
 		switch(phase) {
-		case 8: // 0b00001000: Phase 1 ist vorhanden
+		case 8: // 0b00001000: Phase 1 is active
 			return 1;
-		case 56: // 0b00111000: Phase1-3 ist vorhanden
+		case 56: // 0b00111000: Phase1-3 are active
 			return 3;
 		default:
 			return 0;
@@ -163,11 +163,12 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 	
 	private int GetMaxHardwarePower(int cableCurrent) {
 		int MaxPower = 0;
+		int phases = 3;
 		if (cableCurrent < this.MaxCurrent && cableCurrent > 0) {
-			MaxPower = 3*cableCurrent*230/1000;
+			MaxPower = phases*cableCurrent*230/1000;
 		}
 		else {
-			MaxPower = 3*this.MaxCurrent*230/1000;
+			MaxPower = phases*this.MaxCurrent*230/1000;
 		}
 		return MaxPower;
 	}
