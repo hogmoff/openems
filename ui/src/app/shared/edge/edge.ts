@@ -1,6 +1,5 @@
 import { BehaviorSubject, Subject } from 'rxjs';
 import { cmp } from 'semver-compare-multi';
-import { JsonrpcRequest, JsonrpcResponseSuccess } from '../jsonrpc/base';
 import { CurrentDataNotification } from '../jsonrpc/notification/currentDataNotification';
 import { EdgeConfigNotification } from '../jsonrpc/notification/edgeConfigNotification';
 import { SystemLogNotification } from '../jsonrpc/notification/systemLogNotification';
@@ -11,11 +10,9 @@ import { GetEdgeConfigRequest } from '../jsonrpc/request/getEdgeConfigRequest';
 import { GetEdgeConfigResponse } from '../jsonrpc/response/getEdgeConfigResponse';
 import { JsonrpcRequest, JsonrpcResponseSuccess, AbstractJsonrpcRequest } from '../jsonrpc/base';
 import { ComponentJsonApiRequest } from '../jsonrpc/request/componentJsonApiRequest';
-import { Role } from '../type/role';
 import { SubscribeChannelsRequest } from '../jsonrpc/request/subscribeChannelsRequest';
 import { SubscribeSystemLogRequest } from '../jsonrpc/request/subscribeSystemLogRequest';
 import { UpdateComponentConfigRequest } from '../jsonrpc/request/updateComponentConfigRequest';
-import { GetEdgeConfigResponse } from '../jsonrpc/response/getEdgeConfigResponse';
 import { Websocket } from '../service/websocket';
 import { ChannelAddress } from '../type/channeladdress';
 import { Role } from '../type/role';
@@ -261,14 +258,8 @@ export class Edge {
     let wrap = request;
     return new Promise((resolve, reject) => {
       ws.sendRequest(wrap).then(response => {
-        if (env.debugMode) {
-          console.info("Response     [" + request.method + "]", response);
-        }
         resolve(response);
       }).catch(reason => {
-        if (env.debugMode) {
-          console.warn("Request fail [" + request.method + "]", reason);
-        }
         reject(reason);
       });
     });
