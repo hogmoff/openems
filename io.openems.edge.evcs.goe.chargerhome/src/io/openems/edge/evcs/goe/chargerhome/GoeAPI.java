@@ -72,6 +72,36 @@ public class GoeAPI {
 		}
 	}
 	
+	/** Sets the activation status for go-e
+	 * 
+	 * See https://github.com/goecharger
+	 * 
+	 * @return JsonObject with new settings
+	 * @throws OpenemsNamedException on error
+	 */
+	public JsonObject setActive(boolean active) {
+			
+		try {
+			JsonObject json = new JsonObject();
+			if (!debugMode) {
+				Integer status = 0;
+				if (active) {
+					status = 1;
+				}
+				String URL = "http://" + this.IP + "/mqtt?payload=alw=" + Integer.toString(status);
+				json = this.sendRequest(URL, "PUT");
+				return json;
+			}		
+			else {
+				return this.getStatus();
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	/** Sets the Current in Ampere for go-e
 	 * 
 	 * See https://github.com/goecharger

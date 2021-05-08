@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import io.openems.edge.common.channel.Channel;
 import io.openems.edge.common.channel.WriteChannel;
 import io.openems.edge.common.channel.value.Value;
 import io.openems.edge.common.component.AbstractOpenemsComponent;
@@ -70,6 +71,7 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 		this.config = config;
 		this.MinCurrent = config.minHwCurrent();
 		this.MaxCurrent = config.maxHwCurrent();
+		this._setChargingType(ChargingType.AC);
 
 		// start api-Worker
 		goeapi = new GoeAPI(config.ip(), false, "", config.StatusAfterCycles());
@@ -212,6 +214,16 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 		if (valueOpt.isPresent()) {
 
 			Integer power = valueOpt.get();
+			Channel<Integer> minimumHardwarePowerChannel = this.channel(Evcs.ChannelId.MINIMUM_HARDWARE_POWER);
+			if (power < minimumHardwarePowerChannel.value()
+					.orElse(0)) { /* charging under MINIMUM_HARDWARE_POWER isn't possible */
+				power = 0;
+				this.goeapi.setActive(false);
+			}
+			else {
+				this.goeapi.setActive(true);
+			}
+			
 			Value<Integer> phases = this.getPhases();
 			Integer current = power * 1000 / phases.orElse(3) /* e.g. 3 phases */ / 230; /* voltage */
 			// limits the charging value because go-e knows only values between MinCurrent and MaxCurrent
