@@ -98,6 +98,78 @@ public class GoeAPI {
 			return null;
 		}
 	}
+	
+	/** Limit MaxEnergy for go-e
+	 * 
+	 * See https://github.com/goecharger
+	 * 
+	 * @return JsonObject with new settings
+	 * @throws OpenemsNamedException on error
+	 */
+	public boolean limitMaxEnergy(boolean limit) {
+			
+		try {
+			JsonObject json = new JsonObject();
+			if (!debugMode) {
+				int stp = 0;
+				if (limit) {
+					stp = 2;
+				}				
+				String URL = "http://" + this.IP + "/mqtt?payload=stp=" + Integer.toString(stp);
+				json = this.sendRequest(URL, "PUT");
+				if (json != null) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}		
+			else {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/** Sets the MaxEnergy in 0.1 kWh for go-e
+	 * 
+	 * See https://github.com/goecharger
+	 * 
+	 * @return JsonObject with new settings
+	 * @throws OpenemsNamedException on error
+	 */
+	public boolean setMaxEnergy(int maxEnergy) {
+			
+		try {
+			JsonObject json = new JsonObject();
+			if (!debugMode) {
+				if (maxEnergy > 0) {
+					this.limitMaxEnergy(true);
+				}
+				else {
+					this.limitMaxEnergy(false);
+				}				
+				String URL = "http://" + this.IP + "/mqtt?payload=dwo=" + Integer.toString(maxEnergy);
+				json = this.sendRequest(URL, "PUT");
+				if (json != null) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}		
+			else {
+				return true;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 
 	/**
 	 * Sends a get or set request to the go-e API.

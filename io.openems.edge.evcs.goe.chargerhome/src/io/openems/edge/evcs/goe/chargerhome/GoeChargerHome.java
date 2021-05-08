@@ -14,6 +14,7 @@ import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
 import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -37,7 +38,7 @@ import io.openems.edge.evcs.api.EvcsPower;
 public class GoeChargerHome extends AbstractOpenemsComponent
 		implements ManagedEvcs, Evcs, OpenemsComponent, EventHandler {
 
-	//private final Logger log = LoggerFactory.getLogger(GoeChargerHome.class);
+	private final Logger log = LoggerFactory.getLogger(GoeChargerHome.class);
 	private GoeAPI goeapi = null;
 	
 	protected Config config;
@@ -47,6 +48,7 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 
 	private int MinCurrent;
 	private int MaxCurrent;
+	private int lastEnergySession;
 
 	/**
 	 * Constructor.
@@ -124,6 +126,7 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 				this.channel(GoeChannelId.ERROR).setNextValue(err);
 				this.channel(Evcs.ChannelId.CHARGINGSTATION_COMMUNICATION_FAILED).setNextValue(false);
 				
+				this.setEnergySession();
 				this.setPower();
 				
 			}
@@ -219,6 +222,47 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 				current = this.MaxCurrent;
 			}
 			this.goeapi.setCurrent(current);
+		}
+	}
+	
+	/**
+	 * Sets the Energy Limit for this session from SET_ENERGY_SESSION channel.
+	 * 
+	 * <p>
+	 * Allowed values for the command setenergy are 0; 1-65535 the value of the
+	 * command is 0.1 Wh. The charging station will charge till this limit.
+	 */
+	private void setEnergySession() {
+
+		WriteChannel<Integer> channel = this.channel(ManagedEvcs.ChannelId.SET_ENERGY_LIMIT);
+
+		Optional<Integer> valueOpt = channel.getNextWriteValueAndReset();
+		if (valueOpt.isPresent()) {
+
+			Integer energyTarget = valueOpt.get();
+			this._setSetEnergyLimit(energyTarget);
+
+			if (energyTarget < 0) {
+				return;
+			}
+
+			/*
+			 * limits the target value because go-e knows only values between 0 and
+			 * 65535 0.1Wh
+			 */
+			energyTarget /= 100;
+			energyTarget = energyTarget > 65535 ? 65535 : energyTarget;
+			energyTarget = energyTarget > 0 && energyTarget < 1 ? 1 : energyTarget;
+
+			if (!energyTarget.equals(this.lastEnergySession)) {
+
+				this.logInfoInDebugmode(this.log, "Setting go-e " + this.alias()
+						+ " Energy Limit in this Session to [" + energyTarget / 10 + " kWh]");
+
+				if (this.goeapi.setMaxEnergy(energyTarget)) {
+					this.lastEnergySession = energyTarget;
+				}
+			}
 		}
 	}
 	
