@@ -27,6 +27,9 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 	@AttributeDefinition(name = "Realm", description = "The Realm-Name of the Edimax device.")
 	String realm() default "SP2101W_V2";
 	
+	@AttributeDefinition(name = "Refresh Cycles", description = "Refresh status every x cycle", required = true)
+	int StatusAfterCycles() default 10;
+	
 	@AttributeDefinition(name = "User", description = "The Admin User of the Edimax device.")
 	String user() default "admin";
 	

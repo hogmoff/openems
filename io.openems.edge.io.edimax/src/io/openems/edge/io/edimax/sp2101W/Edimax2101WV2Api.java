@@ -38,12 +38,17 @@ public class Edimax2101WV2Api {
 	private final String realm;
 	private final String user;
 	private final String pass;
+	private int executeEveryCycle;
+	private int cycle;
+	private JsonObject jsonStatus;
 
-	public Edimax2101WV2Api(String ip, String Port, String Realm, String User, String Password) {
+	public Edimax2101WV2Api(String ip, String Port, String Realm, String User, String Password, int StatusAfterCycles) {
 		this.baseUrl = "http://" + ip + ":" + Port;
 		this.realm = Realm;
 		this.user = User;
 		this.pass = Password;
+		this.executeEveryCycle = StatusAfterCycles;
+		this.cycle = 0;
 	}
 
 	/**
@@ -55,47 +60,56 @@ public class Edimax2101WV2Api {
 	 * @throws OpenemsNamedException 
 	 */
 	public JsonObject getStatus() throws OpenemsNamedException {
-		Document doc = this.sendPostRequest("/smartplug.cgi", 
-				"<?xml version=\"1.0\" encoding=\"UTF8\"?>" + 
-				"<SMARTPLUG id=\"edimax\">" + 
-				"<CMD id=\"get\">" + 
-				"<NOW_POWER>" + 
-				"<Device.System.Power.NowCurrent>" + 
-				"</Device.System.Power.NowCurrent>" + 
-				"<Device.System.Power.NowPower>" + 
-				"</Device.System.Power.NowPower>" + 
-				"</NOW_POWER>" + 
-				"<Device.System.Power.State>" + 
-				"</Device.System.Power.State>" + 
-				"</CMD>" + 
-				"</SMARTPLUG>");
-		
-		// status
-		NodeList nodes = doc.getElementsByTagName("Device.System.Power.State");
-		String Wert = nodes.item(0).getTextContent();
-		Boolean bWert;
-		if (Wert.equals("ON")) {
-			bWert = true;
+		// Execute every x-Cycle
+		if (this.cycle == 0 || this.cycle % this.executeEveryCycle == 0) {
+			Document doc = this.sendPostRequest("/smartplug.cgi", 
+					"<?xml version=\"1.0\" encoding=\"UTF8\"?>" + 
+					"<SMARTPLUG id=\"edimax\">" + 
+					"<CMD id=\"get\">" + 
+					"<NOW_POWER>" + 
+					"<Device.System.Power.NowCurrent>" + 
+					"</Device.System.Power.NowCurrent>" + 
+					"<Device.System.Power.NowPower>" + 
+					"</Device.System.Power.NowPower>" + 
+					"</NOW_POWER>" + 
+					"<Device.System.Power.State>" + 
+					"</Device.System.Power.State>" + 
+					"</CMD>" + 
+					"</SMARTPLUG>");
+			
+			// status
+			NodeList nodes = doc.getElementsByTagName("Device.System.Power.State");
+			String Wert = nodes.item(0).getTextContent();
+			Boolean bWert;
+			if (Wert.equals("ON")) {
+				bWert = true;
+			}
+			else bWert = false;
+			
+			JsonElement element = JsonUtils.getAsJsonElement(bWert);
+			JsonObject jsonObject = new JsonObject();
+			jsonObject.add("ison", element);
+			
+			// Current
+			NodeList nodesC = doc.getElementsByTagName("Device.System.Power.NowCurrent");
+			double current = Double.parseDouble(nodesC.item(0).getTextContent()) * 1000;		
+			JsonElement elementC = JsonUtils.getAsJsonElement((int)current);
+			jsonObject.add("current", elementC);
+			
+			// Power
+			NodeList nodesP = doc.getElementsByTagName("Device.System.Power.NowPower");
+			double power = Double.parseDouble(nodesP.item(0).getTextContent());		
+			JsonElement elementP = JsonUtils.getAsJsonElement((int)power);
+			jsonObject.add("power", elementP);
+			
+			this.jsonStatus = jsonObject;
+			this.cycle = 1;
+			return jsonObject;
 		}
-		else bWert = false;
-		
-		JsonElement element = JsonUtils.getAsJsonElement(bWert);
-		JsonObject jsonObject = new JsonObject();
-		jsonObject.add("ison", element);
-		
-		// Current
-		NodeList nodesC = doc.getElementsByTagName("Device.System.Power.NowCurrent");
-		double current = Double.parseDouble(nodesC.item(0).getTextContent()) * 1000;		
-		JsonElement elementC = JsonUtils.getAsJsonElement((int)current);
-		jsonObject.add("current", elementC);
-		
-		// Power
-		NodeList nodesP = doc.getElementsByTagName("Device.System.Power.NowPower");
-		double power = Double.parseDouble(nodesP.item(0).getTextContent());		
-		JsonElement elementP = JsonUtils.getAsJsonElement((int)power);
-		jsonObject.add("power", elementP);
-		
-		return jsonObject;
+		else {
+			this.cycle++;
+			return this.jsonStatus;			
+		}
 	}
 
 

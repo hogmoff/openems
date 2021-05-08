@@ -60,7 +60,7 @@ public class Edimax2101WV2 extends AbstractOpenemsComponent implements DigitalOu
 	@Activate
 	void activate(ComponentContext context, Config config) {
 		super.activate(context, config.id(), config.alias(), config.enabled());
-		this.edimax2101W_V2_api = new Edimax2101WV2Api(config.ip(), config.port(), config.realm(), config.user(), config.password());
+		this.edimax2101W_V2_api = new Edimax2101WV2Api(config.ip(), config.port(), config.realm(), config.user(), config.password(), config.StatusAfterCycles());
 	}
 
 	@Deactivate
