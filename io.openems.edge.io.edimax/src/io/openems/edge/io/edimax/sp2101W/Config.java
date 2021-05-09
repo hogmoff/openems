@@ -3,6 +3,8 @@ package io.openems.edge.io.edimax.sp2101W;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
+import io.openems.edge.meter.api.MeterType;
+
 @ObjectClassDefinition(//
 		name = "IO Edimax 2101W V2", //
 		description = "Implements a switching socket with power meter")
@@ -35,6 +37,9 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 	
 	@AttributeDefinition(name = "Password", description = "The Password of the Edimax device.")
 	String password() default "12345678";
+	
+	@AttributeDefinition(name = "Type", description = "Type of Edimax device.")
+	MeterType type() default MeterType.CONSUMPTION_METERED;
 	
 	String webconsole_configurationFactory_nameHint() default "io.openems.edge.io.edimax_2101W_V2 [{id}]";
 
