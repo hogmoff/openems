@@ -18,6 +18,31 @@
                         </tr>
                     </ng-container>
                     <ng-container *ngIf="(edge.currentData | async)['channel'] as currentData">
+                        <ng-container *ngIf="GoodweComponents.length > 0">
+                            <ng-container *ngFor="let component of GoodweComponents">
+                                <tr>
+                                    <td style="width: 65%">{{'Haushalt 1 + WP'}}</td>
+                                    <ng-container *ngIf="sum.activePower - getTotalBackupPower() as Power1">
+                                        <td style="width: 35%" class="align_right" *ngIf="Power1 > 0">
+                                            {{ Power1 | unitvalue:'kW' }}
+                                        </td>
+                                        <td style="width: 35%" class="align_right" *ngIf="Power1 <= 0">
+                                            {{ 0 | unitvalue:'kW' }}
+                                        </td>
+                                    </ng-container>
+                                </tr>
+                                <tr>
+                                    <td style="width:65%" *ngIf="component.id == component.alias">{{component.id}}
+                                    </td>
+                                    <td style="width: 65%" *ngIf="component.id != component.alias">
+                                        {{'Haushalt 2'}}
+                                    </td>
+                                    <td style="width:35%" class="align_right">
+                                        {{ currentData[component.id + '/TotalBackUpLoad'] | unitvalue:'kW' }}
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </ng-container>
                         <ng-container *ngIf="evcsComponents.length > 0">
                             <ng-container *ngFor="let component of evcsComponents">
                                 <ng-container *ngIf="currentData[component.id + '/ChargePower'] > 0">
@@ -36,7 +61,7 @@
                         </ng-container>
                         <ng-container *ngIf="consumptionMeterComponents.length > 0">
                             <ng-container *ngFor="let component of consumptionMeterComponents">
-                                <ng-container *ngIf="currentData[component.id + '/ActivePower'] > 0">
+                                <ng-container *ngIf="currentData[component.id + '/ActivePower'] >= 0">
                                     <tr>
                                         <td style="width:65%" *ngIf="component.id == component.alias">{{component.id}}
                                         </td>
@@ -52,7 +77,8 @@
                         </ng-container>
                     </ng-container>
 
-                    <tr *ngIf="evcsComponents.length != 0 || consumptionMeterComponents.length != 0">
+                    <tr
+                        *ngIf="(evcsComponents.length != 0 || consumptionMeterComponents.length != 0) && GoodweComponents.length == 0">
                         <td style="width: 65%" translate>General.otherConsumption</td>
                         <ng-container *ngIf="sum.activePower - getTotalOtherPower() as otherPower">
                             <td style="width: 35%" class="align_right" *ngIf="otherPower > 0">

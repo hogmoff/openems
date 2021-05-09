@@ -46,8 +46,6 @@ import { SelfconsumptionModalComponent } from './selfconsumption/modal/modal.com
 import { SharedModule } from './../../shared/shared.module';
 import { SinglethresholdComponent } from './singlethreshold/singlethreshold.component';
 import { SinglethresholdModalComponent } from './singlethreshold/modal/modal.component';
-import { SinglethresholdComponent } from './singlethreshold/singlethreshold.component';
-import { StorageModalComponent } from './storage/modal/modal.component';
 import { StorageComponent } from './storage/storage.component';
 import { StorageModalComponent } from './storage/modal/modal.component';
 import { SummaryComponent } from './summary/summary.component';

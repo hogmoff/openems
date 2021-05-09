@@ -13,10 +13,12 @@ export class ConsumptionModalComponent {
     @Input() public edge: Edge;
     @Input() public evcsComponents: EdgeConfig.Component[];
     @Input() public consumptionMeterComponents: EdgeConfig.Component[];
+    @Input() public GoodweComponents: EdgeConfig.Component[];
     @Input() public currentTotalChargingPower: () => number;
     @Input() public currentTotalConsumptionMeterPower: () => number;
     @Input() public sumOfChannel: () => number;
     @Input() public getTotalOtherPower: () => number;
+    @Input() public getTotalBackupPower: () => number;
 
     public config: EdgeConfig = null;
 
