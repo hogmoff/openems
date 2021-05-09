@@ -1,9 +1,0 @@
-= Edimax 2101W_V2
-
-Implemented Natures
-
-DigitalOutput
-
-SymmetricMeter
-
-https://github.com/OpenEMS/openems/tree/develop/io.openems.edge.edimax.2101W_V2[Source Code icon:github[]]
