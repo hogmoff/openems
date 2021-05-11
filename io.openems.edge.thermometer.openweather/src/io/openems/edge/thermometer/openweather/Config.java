@@ -17,10 +17,10 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 	@AttributeDefinition(name = "Is enabled?", description = "Is this Component enabled?")
 	boolean enabled() default true;
 	
-	@AttributeDefinition(name = "Latitude", description = "Latitude for Forecast Position")
+	@AttributeDefinition(name = "Latitude", description = "Latitude for Position")
 	String lat() default "52.516273";
 	
-	@AttributeDefinition(name = "Longitude", description = "Longitude for Forecast Position")
+	@AttributeDefinition(name = "Longitude", description = "Longitude for Position")
 	String lon() default "13.381179";
 	
 	@AttributeDefinition(name = "API Key", description = "API-Key for Openweather")

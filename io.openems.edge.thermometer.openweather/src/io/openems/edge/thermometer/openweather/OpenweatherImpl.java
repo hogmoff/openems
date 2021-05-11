@@ -69,7 +69,7 @@ public class OpenweatherImpl extends AbstractOpenemsComponent implements Openems
 		case EdgeEventConstants.TOPIC_CYCLE_BEFORE_PROCESS_IMAGE:
 			try {
 				JsonObject json = this.openweatherAPI.getCurrentWeatherData();
-				this.channel(Openweather.ChannelId.TEMPERATURE).setNextValue(json.get("temperature").getAsInt());
+				this.channel(Openweather.ChannelId.TEMPERATURE).setNextValue(json.get("temperature").getAsInt()-273);
 				this.channel(Openweather.ChannelId.CLOUDS).setNextValue(json.get("clouds").getAsInt());
 			} catch (OpenemsNamedException e) {
 				this.logError(this.log, e.getMessage());
