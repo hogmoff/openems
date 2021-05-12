@@ -54,7 +54,9 @@ export class PredictionComponent extends AbstractHistoryWidget implements OnInit
             let channels: ChannelAddress[] = [
                 new ChannelAddress('predictorSolcast0', 'Predict'),
                 new ChannelAddress('predictorSolcast0', 'Predict10'),
-                new ChannelAddress('predictorSolcast0', 'Predict90')
+                new ChannelAddress('predictorSolcast0', 'Predict90'),
+                new ChannelAddress('weather0', 'Temperature'),
+                new ChannelAddress('weather0', 'Clouds')
             ];
             resolve(channels);
         });

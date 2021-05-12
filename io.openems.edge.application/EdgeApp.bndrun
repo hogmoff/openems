@@ -145,7 +145,7 @@
 	bnd.identity;id='io.openems.edge.timedata.rrd4j',\
 	bnd.identity;version='latest';id='io.openems.edge.goodwe',\
 	bnd.identity;version='latest';id='io.openems.edge.evcs.goe.chargerhome',\
-	bnd.identity;version='latest';id='io.openems.edge.thermometer.openweather'
+	bnd.identity;version='latest';id='io.openems.edge.predictor.openweather'
 		
 -runbundles: \
 	Java-WebSocket;version='[1.5.2,1.5.3)',\
@@ -315,4 +315,4 @@
 	io.openems.edge.evcs.goe.chargerhome;version=snapshot,\
 	io.openems.wrapper.paho-mqttv5;version=snapshot,\
 	org.eclipse.paho.mqttv5.client;version='[1.2.5,1.2.6)',\
-	io.openems.edge.thermometer.openweather;version=snapshot
+	io.openems.edge.predictor.openweather;version=snapshot

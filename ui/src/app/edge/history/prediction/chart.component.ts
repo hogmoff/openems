@@ -61,6 +61,8 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
             let HistoricPredictionData: number[] = [];
             let HistoricPredictionData10: number[] = [];
             let HistoricPredictionData90: number[] = [];
+            let HistoricTemperature: number[] = [];
+            let HistoricClouds: number[] = [];
 
             if ('_sum/ProductionActivePower' in result.data) {
                 /*
@@ -109,6 +111,32 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                         return null
                     } else {
                         return value / 1000; // convert to kW
+                    }
+                });
+            }
+
+            if ('weather0/Temperature' in result.data) {
+                /*
+                 * Temperature
+                 */
+                HistoricTemperature = result.data['weather0/Temperature'].map(value => {
+                    if (value == null) {
+                        return null
+                    } else {
+                        return value;
+                    }
+                });
+            }
+
+            if ('weather0/Clouds' in result.data) {
+                /*
+                 * Temperature
+                 */
+                HistoricClouds = result.data['weather0/Clouds'].map(value => {
+                    if (value == null) {
+                        return null
+                    } else {
+                        return value;
                     }
                 });
             }
@@ -241,6 +269,22 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
             })
             this.colors.push(this.predict90Color);
 
+            datasets.push({
+                label: this.translate.instant('General.temperature'),
+                data: HistoricTemperature,
+                yAxisID: 'yAxis2',
+                hidden: false
+            })
+            this.colors.push(this.temperatureColor);
+
+            datasets.push({
+                label: this.translate.instant('General.clouds'),
+                data: HistoricClouds,
+                yAxisID: 'yAxis3',
+                hidden: false
+            })
+            this.colors.push(this.cloudsColor);
+
             this.service.stopSpinner(this.spinnerId);
             this.datasets = datasets;
             this.loading = false;
@@ -257,7 +301,9 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                 new ChannelAddress('_sum', 'ProductionActivePower'),
                 new ChannelAddress('predictorSolcast0', 'Predict'),
                 new ChannelAddress('predictorSolcast0', 'Predict10'),
-                new ChannelAddress('predictorSolcast0', 'Predict90')
+                new ChannelAddress('predictorSolcast0', 'Predict90'),
+                new ChannelAddress('weather0', 'Temperature'),
+                new ChannelAddress('weather0', 'Clouds')
             ];
             resolve(result);
         })
@@ -266,10 +312,74 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
     protected setLabel() {
         let options = this.createDefaultChartOptions();
         options.scales.yAxes[0].scaleLabel.labelString = "kW";
+        // adds second y-axis to chart
+        options.scales.yAxes.push({
+            id: 'yAxis2',
+            position: 'right',
+            scaleLabel: {
+                display: true,
+                labelString: "°C",
+                padding: -2,
+                fontSize: 11
+            },
+            gridLines: {
+                display: false
+            },
+            ticks: {
+                beginAtZero: true,
+                max: 50,
+                padding: -5,
+                stepSize: 10
+            }
+        })
+        options.layout = {
+            padding: {
+                left: 2,
+                right: 2,
+                top: 0,
+                bottom: 0
+            }
+        }
+        // adds third y-axis to chart
+        options.scales.yAxes.push({
+            id: 'yAxis3',
+            position: 'right',
+            scaleLabel: {
+                display: true,
+                labelString: "%",
+                padding: -2,
+                fontSize: 11
+            },
+            gridLines: {
+                display: false
+            },
+            ticks: {
+                beginAtZero: true,
+                max: 100,
+                padding: -5,
+                stepSize: 20
+            }
+        })
+        options.layout = {
+            padding: {
+                left: 2,
+                right: 2,
+                top: 0,
+                bottom: 0
+            }
+        }
+
         options.tooltips.callbacks.label = function (tooltipItem: TooltipItem, data: Data) {
             let label = data.datasets[tooltipItem.datasetIndex].label;
             let value = tooltipItem.yLabel;
-            return label + ": " + formatNumber(value, 'de', '1.0-2') + " kW";
+            if (label == 'Temperatur') {
+                return label + ": " + formatNumber(value, 'de', '1.0-0') + " °C";
+            } else if (label == 'Bewölkung') {
+                return label + ": " + formatNumber(value, 'de', '1.0-0') + " %";
+            }
+            else {
+                return label + ": " + formatNumber(value, 'de', '1.0-2') + " kW";
+            }
         }
         this.options = options;
     }

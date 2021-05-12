@@ -60,6 +60,14 @@ export abstract class AbstractHistoryChart {
         backgroundColor: 'rgba(108,122,137,0.05)',
         borderColor: 'rgba(108,122,137,1)'
     }
+    protected temperatureColor = {
+        backgroundColor: 'rgba(255,0,0,0.05)',
+        borderColor: 'rgba(255,0,0,1)'
+    }
+    protected cloudsColor = {
+        backgroundColor: 'rgba(108,122,137,0.05)',
+        borderColor: 'rgba(108, 122, 137, 1)'
+    }
 
     constructor(
         protected service: Service,
