@@ -148,20 +148,29 @@ export abstract class AbstractHistoryChart {
         return new Promise((resolve, reject) => {
             this.service.getCurrentEdge().then(edge => {
                 let channelAddresses = [];
-                channelAddresses.push('predictorSolcast0/Predict');
-                channelAddresses.push('predictorSolcast0/Predict10');
-                channelAddresses.push('predictorSolcast0/Predict90');
-                channelAddresses.push('weather0/Predict_Temperature');
-                channelAddresses.push('weather0/Predict_Clouds');
-                let request = new Get24HoursPredictionRequest(channelAddresses);
-                edge.sendPredictorRequest(this.service.websocket, request, channelAddresses).then(response => {
-                    let result = (response as Get24HoursPredictionResponse).result;
-                    if (Object.keys(result[channelAddresses[0]]).length != 0) {
-                        resolve(response as Get24HoursPredictionResponse);
-                    } else {
-                        reject(new JsonrpcResponseError(response.id, { code: 0, message: "Result was empty" }));
+                this.service.getConfig().then(config => {
+                    let predictorComponents = config.getComponentsImplementingNature("io.openems.edge.predictor.api.oneday.Predictor24Hours");
+                    for (let component of predictorComponents) {
+                        let channels = [];
+                        if ('channelAddresses' in component.properties) {
+                            channels = component.properties['channelAddresses']
+                            if (channels.length > 0) {
+                                for (let channel of channels) {
+                                    channelAddresses.push(new ChannelAddress(component.id, ChannelAddress.fromString(channel).channelId));
+                                }
+                            }
+                        }
                     }
-                }).catch(reason => reject(reason));
+                    let request = new Get24HoursPredictionRequest(channelAddresses);
+                    edge.sendPredictorRequest(this.service.websocket, request, channelAddresses).then(response => {
+                        let result = (response as Get24HoursPredictionResponse).result;
+                        if (Object.keys(result[channelAddresses[0].toString()]).length != 0) {
+                            resolve(response as Get24HoursPredictionResponse);
+                        } else {
+                            reject(new JsonrpcResponseError(response.id, { code: 0, message: "Result was empty" }));
+                        }
+                    }).catch(reason => reject(reason));
+                });
             });
         });
     }
