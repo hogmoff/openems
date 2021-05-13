@@ -65,8 +65,8 @@ export abstract class AbstractHistoryChart {
         borderColor: 'rgba(255,0,0,1)'
     }
     protected cloudsColor = {
-        backgroundColor: 'rgba(108,122,137,0.05)',
-        borderColor: 'rgba(108, 122, 137, 1)'
+        backgroundColor: 'rgba(77,5,232,0.05)',
+        borderColor: 'rgba(77,5,232,1)'
     }
 
     constructor(
@@ -151,6 +151,8 @@ export abstract class AbstractHistoryChart {
                 channelAddresses.push('predictorSolcast0/Predict');
                 channelAddresses.push('predictorSolcast0/Predict10');
                 channelAddresses.push('predictorSolcast0/Predict90');
+                channelAddresses.push('weather0/Predict_Temperature');
+                channelAddresses.push('weather0/Predict_Clouds');
                 let request = new Get24HoursPredictionRequest(channelAddresses);
                 edge.sendPredictorRequest(this.service.websocket, request, channelAddresses).then(response => {
                     let result = (response as Get24HoursPredictionResponse).result;

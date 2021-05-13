@@ -82,7 +82,7 @@ public class OpenweatherAPI {
 		
 			JsonArray forecasts = (JsonArray) json.get("hourly");			
 			JsonArray weatherPrediction = new JsonArray();
-			for (Integer i = 0; i < 2*hours; i++) {	
+			for (Integer i = 0; i < hours; i++) {	
 				JsonObject predictData = new JsonObject();
 				predictData.add("time", forecasts.get(i).getAsJsonObject().get("dt"));
 				predictData.add("temperature", forecasts.get(i).getAsJsonObject().get("temp"));

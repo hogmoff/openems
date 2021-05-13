@@ -26,11 +26,11 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 	@AttributeDefinition(name = "API Key", description = "API-Key for Openweather")
 	String key() default "";
 	
-	@AttributeDefinition(name = "read every x-cycle", description = "Read values every x cycles")
-	int cycles() default 10;
+	@AttributeDefinition(name = "read every x-cycle", description = "Read values vom API every x cycles")
+	int cycles() default 60;
 	
 	@AttributeDefinition(name = "Channel-Addresses", description = "List of Channel-Addresses this Predictor is used for, e.g. '*/Predict', '*/Predict10'")
-	String[] channelAddresses() default { "*/Temperature", "*/Clouds" };
+	String[] channelAddresses() default { "*/Predict_Temperature", "*/Predict_Clouds" };
 
 	String webconsole_configurationFactory_nameHint() default "Weather data for Openweather [{id}]";
 }

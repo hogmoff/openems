@@ -165,6 +165,20 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                         return value90 / 1000; // convert to kW
                     }
                 });
+                let predictionTemp = result2['weather0/Predict_Temperature'].map(valueTemp => {
+                    if (valueTemp == null) {
+                        return null
+                    } else {
+                        return valueTemp;
+                    }
+                });
+                let predictionClouds = result2['weather0/Predict_Clouds'].map(valueClouds => {
+                    if (valueClouds == null) {
+                        return null
+                    } else {
+                        return valueClouds;
+                    }
+                });
 
                 if (predictionData.length > 0) {
                     let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
@@ -234,6 +248,54 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                         borderDash: [5, 5]
                     });
                     this.colors.push(this.predict90Color)
+                }
+                if (predictionTemp.length > 0) {
+                    let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
+                    let StartIndex = labels.indexOf(StartTime);
+
+                    let newpredictionTemp: number[] = new Array(StartIndex - 1);
+                    let newlabel = new Date(StartTime.getTime() + 15 * 60000);
+                    let prodIndex = 0;
+                    for (let i = StartIndex; i < labels.length; i++) {
+                        if (labels[i].getTime() >= newlabel.getTime()) {
+                            newlabel = new Date(newlabel.getTime() + 15 * 60000);
+                            prodIndex++;
+                        }
+                        newpredictionTemp.push(predictionTemp[prodIndex]);
+                    }
+
+                    datasets.push({
+                        label: this.translate.instant('General.temperature'),
+                        data: newpredictionTemp,
+                        yAxisID: 'yAxis2',
+                        hidden: false,
+                        borderDash: [5, 5]
+                    });
+                    this.colors.push(this.temperatureColor)
+                }
+                if (predictionClouds.length > 0) {
+                    let StartTime = labels.filter(x => x.getTime() >= Date.now())[0];
+                    let StartIndex = labels.indexOf(StartTime);
+
+                    let newpredictionClouds: number[] = new Array(StartIndex - 1);
+                    let newlabel = new Date(StartTime.getTime() + 15 * 60000);
+                    let prodIndex = 0;
+                    for (let i = StartIndex; i < labels.length; i++) {
+                        if (labels[i].getTime() >= newlabel.getTime()) {
+                            newlabel = new Date(newlabel.getTime() + 15 * 60000);
+                            prodIndex++;
+                        }
+                        newpredictionClouds.push(predictionClouds[prodIndex]);
+                    }
+
+                    datasets.push({
+                        label: this.translate.instant('General.clouds'),
+                        data: newpredictionClouds,
+                        yAxisID: 'yAxis3',
+                        hidden: false,
+                        borderDash: [5, 5]
+                    });
+                    this.colors.push(this.cloudsColor)
                 }
             });
 
