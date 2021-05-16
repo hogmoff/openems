@@ -32,6 +32,14 @@
                         </tr>
                     </ng-container>
                 </ng-container>
+                <tr>
+                    <td style="width: 65%">
+                        {{ "Summe" }}
+                    </td>
+                    <td style="width: 35%" class="align_right">
+                        {{ data["_sum/ProductionActiveEnergy"] | unitvalue:'kWh' }}
+                    </td>
+                </tr>
             </ng-container>
 
             <ng-template #noData>

@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ChannelAddress, Edge, Service, EdgeConfig } from '../../../shared/shared';
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { DefaultTypes } from 'src/app/shared/service/defaulttypes';
+import { Cumulated } from 'src/app/shared/jsonrpc/response/queryHistoricTimeseriesEnergyResponse';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
     selector: PredictionComponent.SELECTOR,
@@ -15,6 +17,7 @@ export class PredictionComponent extends AbstractHistoryWidget implements OnInit
     private static readonly SELECTOR = "predictionWidget";
 
     public edge: Edge = null;
+    public data: Cumulated = null;
 
     constructor(
         public service: Service,
@@ -30,7 +33,7 @@ export class PredictionComponent extends AbstractHistoryWidget implements OnInit
     }
 
     ngOnDestroy() {
-        this.unsubscribeWidgetRefresh()
+        this.unsubscribeWidgetRefresh();
     }
 
     ngOnChanges() {
@@ -41,9 +44,9 @@ export class PredictionComponent extends AbstractHistoryWidget implements OnInit
         this.service.getConfig().then(config => {
             this.getChannelAddresses(this.edge, config).then(channels => {
                 this.service.queryEnergy(this.period.from, this.period.to, channels).then(response => {
-                    response.result.data;
+                    this.data = response.result.data;
                 }).catch(() => {
-                    null;
+                    this.data = null;
                 })
             });
         })

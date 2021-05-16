@@ -7,15 +7,28 @@
     </ion-item>
     <ion-card-content>
         <table class="full_width">
-            <tr>
-                <td style="width:100%" *ngIf="edge && service.isKwhAllowed(edge); else noData">
-                </td>
-                <ng-template #noData>
+            <ng-container *ngIf="data && edge && service.isKwhAllowed(edge); else noData">
+                <tr>
+                    <td style="width:65%">{{ "Temperatur" }}</td>
+                    <td style="width:35%" class="align_right">
+                        {{ data["weather0/Temperature"] | unitvalue:'°C' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:65%">{{ "Bewölkung" }}</td>
+                    <td style="width:35%" class="align_right">
+                        {{ data["weather0/Clouds"] | unitvalue:'%' }}
+                    </td>
+                </tr>
+            </ng-container>
+            <ng-template #noData>
+                <tr>
+                    <td style="width:65%"></td>
                     <td style="width:35%" class="align_right">
                         &nbsp;
                     </td>
-                </ng-template>
-            </tr>
+                </tr>
+            </ng-template>
         </table>
     </ion-card-content>
 </ion-card>
