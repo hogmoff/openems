@@ -3,6 +3,7 @@ package io.openems.edge.predictor.openweather;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.TreeMap;
+
 import java.util.Map.Entry;
 import java.util.TimeZone;
 
@@ -71,7 +72,7 @@ public class OpenweatherImpl extends AbstractPredictor24Hours implements Predict
 				"&units=metric&exclude=minutely,hourly,daily,alerts&appid=" + config.key();
 		String predictUrl = "http://api.openweathermap.org/data/2.5/onecall?lat=" + config.lat() + "&lon=" + config.lon() + 
 				"&units=metric&exclude=current,minutely,daily,alerts&appid=" + config.key();
-		this.openweatherAPI = new OpenweatherAPI(currentUrl, predictUrl, config.cycles());
+		this.openweatherAPI = new OpenweatherAPI(currentUrl, predictUrl, config.cycles());		
 	}
 
 	@Deactivate
@@ -151,7 +152,7 @@ public class OpenweatherImpl extends AbstractPredictor24Hours implements Predict
 
 			this.prevHour = currentHour;
 		} else {
-			// hour did not change -> return
+			// hour did not change -> return			
 			return;
 		}
 		
@@ -188,7 +189,7 @@ public class OpenweatherImpl extends AbstractPredictor24Hours implements Predict
 			
 		}		
 	}
-
+	
 	@Override
 	public String debugLog() {
 		return "Temperature: " + this.channel(Openweather.ChannelId.TEMPERATURE).value().toString() + " " +

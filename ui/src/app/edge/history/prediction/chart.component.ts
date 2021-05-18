@@ -115,11 +115,11 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                 });
             }
 
-            if ('weather0/Temperature' in result.data) {
+            if ('weewx0/Temperature' in result.data) {
                 /*
                  * Temperature
                  */
-                HistoricTemperature = result.data['weather0/Temperature'].map(value => {
+                HistoricTemperature = result.data['weewx0/Temperature'].map(value => {
                     if (value == null) {
                         return null
                     } else {
@@ -365,7 +365,8 @@ export class PredictionChartComponent extends AbstractHistoryChart implements On
                 new ChannelAddress('predictorSolcast0', 'Predict10'),
                 new ChannelAddress('predictorSolcast0', 'Predict90'),
                 new ChannelAddress('weather0', 'Temperature'),
-                new ChannelAddress('weather0', 'Clouds')
+                new ChannelAddress('weather0', 'Clouds'),
+                new ChannelAddress('weewx0', 'Temperature')
             ];
             resolve(result);
         })
