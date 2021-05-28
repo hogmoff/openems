@@ -70,12 +70,13 @@ public class WeewxWeatherStationImpl extends AbstractOpenemsComponent implements
 	private void getCurrentValues() {
 		try {
 			JsonObject json = this.weewx.getCurrentWeatherData();
-			if (json != null) {				
+			if (json != null) {		
+				JsonObject current = json.get("current").getAsJsonObject();
 				switch(this.config.weatherstation()) {
-				case DNT_WEATHERSTATION_PRO:
-					//JsonObject generation = json.get("generation").getAsJsonObject();
-					JsonObject current = json.get("current").getAsJsonObject();
-					this.channel(WeewxWeatherStation.ChannelId.TEMPERATURE).setNextValue(current.getAsJsonObject().get("temperature").getAsJsonObject().get("value").getAsInt());	
+				case DNT_WEATHERSTATION_PRO:				
+					this.channel(WeewxWeatherStation.ChannelId.TEMPERATURE).setNextValue(current.getAsJsonObject().get("temperature").getAsJsonObject().get("value").getAsInt());
+					this.channel(WeewxWeatherStation.ChannelId.SOLARRADIATION).setNextValue(current.getAsJsonObject().get("solar radiation").getAsJsonObject().get("value").getAsInt());
+					this.channel(WeewxWeatherStation.ChannelId.MAX_SOLARRADIATION).setNextValue(current.getAsJsonObject().get("max solar radiation").getAsJsonObject().get("value").getAsInt());				
 				}
 			}
 		}
@@ -86,6 +87,8 @@ public class WeewxWeatherStationImpl extends AbstractOpenemsComponent implements
 
 	@Override
 	public String debugLog() {
-		return "Temperature: " + this.channel(WeewxWeatherStation.ChannelId.TEMPERATURE).getNextValue().toString();
+		return "Temperature: " + this.channel(WeewxWeatherStation.ChannelId.TEMPERATURE).getNextValue().toString() +
+				" | Solarradiation: " + this.channel(WeewxWeatherStation.ChannelId.SOLARRADIATION).getNextValue().toString() +
+				" | max Solarradiation: " + this.channel(WeewxWeatherStation.ChannelId.MAX_SOLARRADIATION).getNextValue().toString();
 	}
 }
