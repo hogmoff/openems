@@ -306,7 +306,7 @@ public class DWDImpl extends AbstractPredictor24Hours implements Predictor24Hour
 	@Override
 	public String debugLog() {
 		return "Temperature: " + this.channel(DWD.ChannelId.TEMPERATURE).value().toString() + " " +
-				" - Clouds: " +	this.channel(DWD.ChannelId.CLOUDS).value().toString();
+				" | Clouds: " +	this.channel(DWD.ChannelId.CLOUDS).value().toString();
 	}
 
 }

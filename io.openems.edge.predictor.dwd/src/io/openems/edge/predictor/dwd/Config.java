@@ -20,7 +20,7 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 	@AttributeDefinition(name = "Link to MOXMIX_L-kmz-File", description = "Link to opendata.dwd.de")
 	String kmzFile() default "";
 	
-	@AttributeDefinition(name = "Channel-Addresses", description = "List of Channel-Addresses this Predictor is used for, e.g. '*/Predict', '*/Predict10'")
+	@AttributeDefinition(name = "Channel-Addresses", description = "List of Channel-Addresses this Predictor is used for, e.g. '*/Predict_Temperature', '*/Predict_Clouds'")
 	String[] channelAddresses() default { "*/Predict_Temperature", "*/Predict_Clouds" };
 
 	String webconsole_configurationFactory_nameHint() default "Weather data for DWD [{id}]";
