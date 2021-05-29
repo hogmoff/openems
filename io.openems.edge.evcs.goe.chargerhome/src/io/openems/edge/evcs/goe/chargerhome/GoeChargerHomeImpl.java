@@ -129,10 +129,8 @@ public class GoeChargerHomeImpl extends AbstractOpenemsComponent
 				this.channel(GoeChannelId.ERROR).setNextValue(err);
 				this.channel(Evcs.ChannelId.CHARGINGSTATION_COMMUNICATION_FAILED).setNextValue(false);
 				
-				this._setPhases(phases);
 				this.setEnergySession();
-				this.setPower();
-				
+				this.setPower();				
 				
 			}
 			else{
@@ -304,9 +302,18 @@ public class GoeChargerHomeImpl extends AbstractOpenemsComponent
 
 	@Override
 	public String debugLog() {
-		return "Limit:" + this.channel(GoeChannelId.CURR_USER).value().asString() + 
-				"|" + this.getStatus().getName() +
-				"|Energylimit:" + this.lastEnergySession;
+		if (this.config.debugMode()) {
+			return "Limit:" + this.channel(GoeChannelId.CURR_USER).value().asString() + 					
+					"|" + this.getStatus().getName() +
+					"|Phases:" + this.getPhases() +
+					"|Energylimit:" + this.lastEnergySession/10+"kWh" +
+					"|max Hardwarepower:" + this.getMaximumHardwarePower() +
+					"|min Hardwarepower:" + this.getMinimumHardwarePower();			
+		}
+		else {
+			return "Limit:" + this.channel(GoeChannelId.CURR_USER).value().asString() + 
+					"|" + this.getStatus().getName();
+		}		
 	}
 
 	/**
