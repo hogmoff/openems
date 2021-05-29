@@ -115,7 +115,7 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 				this.channel(GoeChannelId.CURRENT_L3).setNextValue(nrg.get(6).getAsInt()*100);
 				this.channel(GoeChannelId.ACTUAL_POWER).setNextValue(nrg.get(11).getAsInt()*10);
 		
-				this.channel(Evcs.ChannelId.PHASES).setNextValue(phases);			
+				this.channel(Evcs.ChannelId.PHASES).setNextValue(phases);				
 				this.channel(Evcs.ChannelId.MAXIMUM_POWER).setNextValue(GetMaxPower(phases));	
 				this.channel(Evcs.ChannelId.MINIMUM_HARDWARE_POWER).setNextValue(GetMinHardwarePower(phases, cabelCurrent));	
 				this.channel(Evcs.ChannelId.MAXIMUM_HARDWARE_POWER).setNextValue(GetMaxHardwarePower(cabelCurrent));	
@@ -128,8 +128,10 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 				this.channel(GoeChannelId.ERROR).setNextValue(err);
 				this.channel(Evcs.ChannelId.CHARGINGSTATION_COMMUNICATION_FAILED).setNextValue(false);
 				
+				this._setPhases(phases);
 				this.setEnergySession();
 				this.setPower();
+				
 				
 			}
 			else{
@@ -156,9 +158,12 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 	}
 	
 	private int ConvertGoePhase(int phase) {
-		switch(phase) {
+		int Phasen = (byte)phase & 0b00111000;			
+		switch(Phasen) {
 		case 8: // 0b00001000: Phase 1 is active
 			return 1;
+		case 24: // 0b00011000: Phase 1+2 is active
+			return 2;
 		case 56: // 0b00111000: Phase1-3 are active
 			return 3;
 		default:
