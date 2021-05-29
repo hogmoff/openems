@@ -36,10 +36,10 @@ import io.openems.edge.evcs.api.EvcsPower;
 		immediate = true, //
 		configurationPolicy = ConfigurationPolicy.REQUIRE, //
 		property = EventConstants.EVENT_TOPIC + "=" + EdgeEventConstants.TOPIC_CYCLE_BEFORE_PROCESS_IMAGE)
-public class GoeChargerHome extends AbstractOpenemsComponent
+public class GoeChargerHomeImpl extends AbstractOpenemsComponent
 		implements ManagedEvcs, Evcs, OpenemsComponent, EventHandler {
 
-	private final Logger log = LoggerFactory.getLogger(GoeChargerHome.class);
+	private final Logger log = LoggerFactory.getLogger(GoeChargerHomeImpl.class);
 	private GoeAPI goeapi = null;
 	
 	protected Config config;
@@ -54,7 +54,7 @@ public class GoeChargerHome extends AbstractOpenemsComponent
 	/**
 	 * Constructor.
 	 */
-	public GoeChargerHome() {
+	public GoeChargerHomeImpl() {
 		super(//
 				OpenemsComponent.ChannelId.values(), //
 				ManagedEvcs.ChannelId.values(), //
