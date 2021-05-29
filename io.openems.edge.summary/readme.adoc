@@ -1,0 +1,3 @@
+= io.openems.edge.summary
+
+https://github.com/OpenEMS/openems/tree/develop/io.openems.edge.summary[Source Code icon:github[]]

@@ -267,7 +267,6 @@ public class GoeChargerHomeImpl extends AbstractOpenemsComponent
 		if (valueOpt.isPresent()) {
 
 			Integer energyTarget = valueOpt.get();
-			this._setSetEnergyLimit(energyTarget);
 
 			if (energyTarget < 0) {
 				return;
