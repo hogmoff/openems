@@ -8,71 +8,74 @@
                 <ion-label translate>Zusammenfassung</ion-label>
             </ion-item>
             <ng-container *ngIf="(edge.currentData | async)['channel'] as currentData">
-                <table class="full_width">
-                    <tr>
-                        <td style="width: 65%">
-                            {{ 'Tagesbilanz' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 65%">
-                            {{ 'Tages-Produktion' }}
-                        </td>
-                        <td style="width:35%" class="align_right">
-                            {{ currentData['summary0/DailyProduction'] | unitvalue:'kWh' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 65%">
-                            {{ 'Tages-Verbrauch' }}
-                        </td>
-                        <td style="width:35%" class="align_right">
-                            {{ currentData['summary0/DailyConsumption'] | unitvalue:'kWh' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 65%">
-                            {{ 'Tages-Einspeisung' }}
-                        </td>
-                        <td style="width:35%" class="align_right">
-                            {{ currentData['summary0/DailySell'] | unitvalue:'kWh' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 65%">
-                            {{ 'Tages-Bezug' }}
-                        </td>
-                        <td style="width:35%" class="align_right">
-                            {{ currentData['summary0/DailyBuy'] | unitvalue:'kWh' }}
-                        </td>
-                    </tr>
-                    <!-- for spacing -->
-                    <div style="padding-top: 15px;"></div>
-                    <tr>
-                        <td style="width: 65%">
-                            {{ 'Monats-Produktion' }}
-                        </td>
-                        <td style="width:35%" class="align_right">
-                            {{ currentData['summary0/MonthlyProduction'] | unitvalue:'kWh' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 65%">
-                            {{ 'Jahres-Produktion' }}
-                        </td>
-                        <td style="width:35%" class="align_right">
-                            {{ currentData['summary0/YearlyProduction'] | unitvalue:'kWh' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="width: 65%">
-                            {{ 'Gesamt-Produktion' }}
-                        </td>
-                        <td style="width:35%" class="align_right">
-                            {{ currentData['summary0/YearlyProduction'] | unitvalue:'kWh' }}
-                        </td>
-                    </tr>
-                </table>
+                <ion-card-content>
+                    <table class="full_width">
+                        <tr>
+                            <td style="width: 100%">
+                                {{ 'Tagesbilanz' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 65%">
+                                {{ 'Tages-Produktion' }}
+                            </td>
+                            <td style="width:35%" class="align_right">
+                                {{ currentData['summary0/DailyProduction'] | unitvalue:'kWh' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 65%">
+                                {{ 'Tages-Verbrauch' }}
+                            </td>
+                            <td style="width:35%" class="align_right">
+                                {{ currentData['summary0/DailyConsumption'] | unitvalue:'kWh' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 65%">
+                                {{ 'Tages-Einspeisung' }}
+                            </td>
+                            <td style="width:35%" class="align_right">
+                                {{ currentData['summary0/DailySell'] | unitvalue:'kWh' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 65%">
+                                {{ 'Tages-Bezug' }}
+                            </td>
+                            <td style="width:35%" class="align_right">
+                                {{ currentData['summary0/DailyBuy'] | unitvalue:'kWh' }}
+                            </td>
+                        </tr>
+                        <!-- for spacing -->
+                        <div style="padding-top: 15px;"></div>
+
+                        <tr>
+                            <td style="width: 65%">
+                                {{ 'Monats-Produktion' }}
+                            </td>
+                            <td style="width:35%" class="align_right">
+                                {{ currentData['summary0/MonthlyProduction'] | unitvalue:'kWh' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 65%">
+                                {{ 'Jahres-Produktion' }}
+                            </td>
+                            <td style="width:35%" class="align_right">
+                                {{ currentData['summary0/YearlyProduction'] | unitvalue:'kWh' }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 65%">
+                                {{ 'Gesamt-Produktion' }}
+                            </td>
+                            <td style="width:35%" class="align_right">
+                                {{ currentData['summary0/YearlyProduction'] | unitvalue:'kWh' }}
+                            </td>
+                        </tr>
+                    </table>
+                </ion-card-content>
             </ng-container>
         </ion-card>
     </ng-container>
