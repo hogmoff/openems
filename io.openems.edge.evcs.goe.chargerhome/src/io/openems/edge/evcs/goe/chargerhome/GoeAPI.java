@@ -22,14 +22,16 @@ public class GoeAPI {
 	private int executeEveryCycle;
 	private int cycle;
 	private JsonObject jsonStatus;
+	private GoeChargerHomeImpl parent;
 
-	public GoeAPI(String ip, boolean debugMode, String debugFile, int StatusAfterCycles) {
+	public GoeAPI(String ip, boolean debugMode, String debugFile, int StatusAfterCycles, GoeChargerHomeImpl p) {
 		this.IP = ip;
 		this.debugMode = debugMode;
 		this.debugFile = debugFile;
 		this.cycle = 0;
 		this.executeEveryCycle = StatusAfterCycles;
 		this.jsonStatus = null;
+		this.parent = p;
 	}
 
 	/**
@@ -82,19 +84,26 @@ public class GoeAPI {
 	public JsonObject setActive(boolean active) {
 			
 		try {
-			JsonObject json = new JsonObject();
-			if (!debugMode) {
-				Integer status = 0;
-				if (active) {
-					status = 1;
+			if (active != this.parent.Active) {
+				JsonObject json = new JsonObject();
+				if (!debugMode) {
+					Integer status = 0;
+					if (active) {
+						status = 1;
+					}
+					String URL = "http://" + this.IP + "/mqtt?payload=alw=" + Integer.toString(status);
+					json = this.sendRequest(URL, "PUT");
+					this.parent.Active = active;					
+					return json;
+				}		
+				else {
+					this.parent.Active = active;
+					return this.getStatus();
 				}
-				String URL = "http://" + this.IP + "/mqtt?payload=alw=" + Integer.toString(status);
-				json = this.sendRequest(URL, "PUT");
-				return json;
-			}		
-			else {
-				return this.getStatus();
 			}
+			else {
+				return this.jsonStatus;
+			}			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -112,15 +121,22 @@ public class GoeAPI {
 	public JsonObject setCurrent(int current) {
 			
 		try {
-			JsonObject json = new JsonObject();
-			if (!debugMode) {
-				Integer CurrentAmpere = current / 1000;
-				String URL = "http://" + this.IP + "/mqtt?payload=amp=" + Integer.toString(CurrentAmpere);
-				json = this.sendRequest(URL, "PUT");
-				return json;
-			}		
+			if (current != this.parent.activeCurrent) {
+				JsonObject json = new JsonObject();
+				if (!debugMode) {
+					Integer CurrentAmpere = current / 1000;
+					String URL = "http://" + this.IP + "/mqtt?payload=amp=" + Integer.toString(CurrentAmpere);
+					json = this.sendRequest(URL, "PUT");
+					this.parent.activeCurrent = current;
+					return json;
+				}		
+				else {
+					this.parent.activeCurrent = current;
+					return this.getStatus();
+				}
+			}
 			else {
-				return this.getStatus();
+				return this.jsonStatus;
 			}
 
 		} catch (Exception e) {

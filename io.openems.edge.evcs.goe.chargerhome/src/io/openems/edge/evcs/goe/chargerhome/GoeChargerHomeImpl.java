@@ -47,6 +47,8 @@ public class GoeChargerHomeImpl extends AbstractOpenemsComponent
 	@Reference
 	private EvcsPower evcsPower;
 
+	public boolean Active;
+	public int activeCurrent;
 	private int MinCurrent;
 	private int MaxCurrent;
 	private int lastEnergySession;
@@ -77,7 +79,7 @@ public class GoeChargerHomeImpl extends AbstractOpenemsComponent
 		this._setMaximumHardwarePower(this.MaxCurrent * 3 * 230);
 
 		// start api-Worker
-		this.goeapi = new GoeAPI(config.ip(), false, "", config.StatusAfterCycles());
+		this.goeapi = new GoeAPI(config.ip(), false, "", config.StatusAfterCycles(), this);
 	}
 
 	@Deactivate
@@ -101,11 +103,19 @@ public class GoeChargerHomeImpl extends AbstractOpenemsComponent
 				String err = json.get("err").getAsString();
 				JsonArray nrg = json.get("nrg").getAsJsonArray();
 				int cabelCurrent = json.get("cbl").getAsInt()*1000;
-				int phases = ConvertGoePhase(json.get("pha").getAsInt());
+				int phases = ConvertGoePhase(json.get("pha").getAsInt());				
+				this.activeCurrent = json.get("amp").getAsInt()*1000;
+				int alw = json.get("alw").getAsInt();
+				if (alw==1) {
+					this.Active = true;
+				}
+				else {
+					this.Active = false;
+				}
 				
 				this.channel(GoeChannelId.SERIAL).setNextValue(json.get("sse").getAsString());
 				this.channel(GoeChannelId.FIRMWARE).setNextValue(json.get("fwv").getAsString());								
-				this.channel(GoeChannelId.CURR_USER).setNextValue(json.get("amp").getAsInt()*1000);
+				this.channel(GoeChannelId.CURR_USER).setNextValue(this.activeCurrent);
 				this.channel(GoeChannelId.STATUS_GOE).setNextValue(json.get("car").getAsInt());			
 				this.channel(Evcs.ChannelId.STATUS).setNextValue(ConvertGoeStatus(json.get("car").getAsInt()));				
 				this.channel(GoeChannelId.VOLTAGE_L1).setNextValue(nrg.get(0).getAsInt());
