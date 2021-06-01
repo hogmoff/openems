@@ -185,6 +185,9 @@ public class SummaryImpl extends AbstractOpenemsComponent implements Summary, Op
 						}
 					}
 					
+					boolean MonthlyValue = false;
+					boolean YearlyValue = false;
+					
 					// Find other values
 					for (int i=4; i < arr.length; i++) {
 						String[] values = arr[i].split(",");
@@ -192,10 +195,12 @@ public class SummaryImpl extends AbstractOpenemsComponent implements Summary, Op
 							if (values[indexStart].startsWith(StartMonth)) {
 								int Production = (int)Double.parseDouble(values[indexValue]) + dailyProduction;	
 								this.channel(Summary.ChannelId.MONTHLY_PRODUCTION).setNextValue(Production);
+								MonthlyValue = true;
 							}		
 							else if (values[indexStart].startsWith(StartYear)) {
 								int Production = (int)Double.parseDouble(values[indexValue]) + dailyProduction;	
 								this.channel(Summary.ChannelId.YEARLY_PRODUCTION).setNextValue(Production);
+								YearlyValue = true;
 							}
 							else if (values[indexStart].startsWith(SumYear)) {
 								int Production = (int)Double.parseDouble(values[indexValue]) + dailyProduction;	
@@ -206,10 +211,12 @@ public class SummaryImpl extends AbstractOpenemsComponent implements Summary, Op
 							if (values[indexStart].startsWith(StartMonth)) {
 								int Consumption = (int)Double.parseDouble(values[indexValue]) + dailyConsumption;	
 								this.channel(Summary.ChannelId.MONTHLY_CONSUMPTION).setNextValue(Consumption);
+								MonthlyValue = true;
 							}		
 							else if (values[indexStart].startsWith(StartYear)) {
 								int Consumption = (int)Double.parseDouble(values[indexValue]) + dailyConsumption;	
 								this.channel(Summary.ChannelId.YEARLY_CONSUMPTION).setNextValue(Consumption);
+								YearlyValue = true;
 							}
 							else if (values[indexStart].startsWith(SumYear)) {
 								int Consumption = (int)Double.parseDouble(values[indexValue]) + dailyConsumption;	
@@ -220,10 +227,12 @@ public class SummaryImpl extends AbstractOpenemsComponent implements Summary, Op
 							if (values[indexStart].startsWith(StartMonth)) {
 								int Sell = Math.abs((int)Double.parseDouble(values[indexValue])) + dailySell;	
 								this.channel(Summary.ChannelId.MONTHLY_SELL).setNextValue(Sell);
+								MonthlyValue = true;
 							}		
 							else if (values[indexStart].startsWith(StartYear)) {
 								int Sell = Math.abs((int)Double.parseDouble(values[indexValue])) + dailySell;	
 								this.channel(Summary.ChannelId.YEARLY_SELL).setNextValue(Sell);
+								YearlyValue = true;
 							}
 							else if (values[indexStart].startsWith(SumYear)) {
 								int Sell = Math.abs((int)Double.parseDouble(values[indexValue])) + dailySell;	
@@ -234,16 +243,31 @@ public class SummaryImpl extends AbstractOpenemsComponent implements Summary, Op
 							if (values[indexStart].startsWith(StartMonth)) {
 								int Buy = (int)Double.parseDouble(values[indexValue]) + dailyBuy;	
 								this.channel(Summary.ChannelId.MONTHLY_BUY).setNextValue(Buy);
+								MonthlyValue = true;
 							}		
 							else if (values[indexStart].startsWith(StartYear)) {
 								int Buy = (int)Double.parseDouble(values[indexValue]) + dailyBuy;	
 								this.channel(Summary.ChannelId.YEARLY_BUY).setNextValue(Buy);
+								YearlyValue = true;
 							}
 							else if (values[indexStart].startsWith(SumYear)) {
 								int Buy = (int)Double.parseDouble(values[indexValue]) + dailyBuy;	
 								this.channel(Summary.ChannelId.SUM_BUY).setNextValue(Buy);
 							}
 						}
+					}
+					
+					if (!MonthlyValue) {
+						this.channel(Summary.ChannelId.MONTHLY_PRODUCTION).setNextValue(dailyProduction);
+						this.channel(Summary.ChannelId.MONTHLY_CONSUMPTION).setNextValue(dailyConsumption);
+						this.channel(Summary.ChannelId.MONTHLY_SELL).setNextValue(dailySell);
+						this.channel(Summary.ChannelId.MONTHLY_BUY).setNextValue(dailyBuy);
+					}
+					if (!YearlyValue) {
+						this.channel(Summary.ChannelId.YEARLY_PRODUCTION).setNextValue(dailyProduction);
+						this.channel(Summary.ChannelId.YEARLY_CONSUMPTION).setNextValue(dailyConsumption);
+						this.channel(Summary.ChannelId.YEARLY_SELL).setNextValue(dailySell);
+						this.channel(Summary.ChannelId.YEARLY_BUY).setNextValue(dailyBuy);
 					}
 				}
 				
