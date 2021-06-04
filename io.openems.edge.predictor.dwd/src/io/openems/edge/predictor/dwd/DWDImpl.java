@@ -171,9 +171,11 @@ public class DWDImpl extends AbstractPredictor24Hours implements Predictor24Hour
 		if (this.TimeSteps.size() > 0 && this.Temperature.size() > 0 && this.Clouds.size() > 0) {
 			hourlyTemp.clear();
 			hourlyClouds.clear();
-			for (Integer i = 0; i < this.TimeSteps.size(); i++) {			
-				hourlyTemp.put(this.TimeSteps.get(i), this.Temperature.get(i));
-				hourlyClouds.put(this.TimeSteps.get(i), this.Clouds.get(i));
+			for (Integer i = 0; i < this.TimeSteps.size(); i++) {	
+				if (this.TimeSteps.get(i).isAfter(currentHour)) {
+					hourlyTemp.put(this.TimeSteps.get(i), this.Temperature.get(i));
+					hourlyClouds.put(this.TimeSteps.get(i), this.Clouds.get(i));
+				}
 			}	
 			this.channel(DWD.ChannelId.PREDICT_ENABLED).setNextValue(true);
 			
