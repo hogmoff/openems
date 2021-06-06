@@ -27,12 +27,12 @@ public class OpenemsConstants {
 	 * 
 	 * This is the number of the bugfix release
 	 */
-	public final static short VERSION_PATCH = 0;
+	public final static short VERSION_PATCH = 7;
 
 	/**
 	 * The additional version string
 	 */
-	public final static String VERSION_STRING = "SNAPSHOT";
+	public final static String VERSION_STRING = "PRIVATER_SNAPSHOT";
 
 	/**
 	 * The complete version as a SemanticVersion.
