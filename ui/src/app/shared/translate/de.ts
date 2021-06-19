@@ -31,6 +31,8 @@ export const TRANSLATION = {
         gridBuyAdvanced: 'Bezug',
         gridSell: 'Netzeinspeisung',
         gridSellAdvanced: 'Einspeisung',
+        household1: 'Haushalt 1 + WP',
+        household2: 'Haushalt 2',
         history: 'Historie',
         inactive: 'Inaktiv',
         info: 'Info',

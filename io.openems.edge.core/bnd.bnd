@@ -14,7 +14,7 @@ Bundle-Version: 1.0.0.${tstamp}
 	io.openems.edge.scheduler.api,\
 	io.openems.edge.timedata.api,\
 	io.openems.wrapper.sdnotify,\
-	Java-WebSocket;version='1.5.1'
+	Java-WebSocket
 
 -testpath: \
 	${testpath}

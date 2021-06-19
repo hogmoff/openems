@@ -10,10 +10,10 @@ Bundle-Version: 1.0.0.${tstamp}
 	io.openems.edge.controller.api,\
 	io.openems.edge.controller.api.common,\
 	io.openems.edge.timedata.api,\
-	Java-WebSocket;version='1.4.1',\
+	Java-WebSocket,\
 	org.ops4j.pax.logging.pax-logging-api,\
-	io.openems.edge.core;version=latest,\
-	io.openems.edge.predictor.api;version='1.0.0'
+	io.openems.edge.core,\
+	io.openems.edge.predictor.api;
 
 -testpath: \
 	${testpath}

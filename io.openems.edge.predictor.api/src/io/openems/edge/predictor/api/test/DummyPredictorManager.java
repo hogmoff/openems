@@ -2,12 +2,17 @@ package io.openems.edge.predictor.api.test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import io.openems.common.OpenemsConstants;
+import io.openems.common.exceptions.OpenemsError.OpenemsNamedException;
+import io.openems.common.jsonrpc.base.JsonrpcRequest;
+import io.openems.common.jsonrpc.base.JsonrpcResponseSuccess;
 import io.openems.common.types.ChannelAddress;
 import io.openems.edge.common.channel.Channel;
 import io.openems.edge.common.component.AbstractOpenemsComponent;
 import io.openems.edge.common.component.OpenemsComponent;
+import io.openems.edge.common.user.User;
 import io.openems.edge.predictor.api.manager.PredictorManager;
 import io.openems.edge.predictor.api.oneday.Prediction24Hours;
 import io.openems.edge.predictor.api.oneday.Predictor24Hours;
@@ -47,5 +52,12 @@ public class DummyPredictorManager extends AbstractOpenemsComponent implements P
 		}
 		// No matching Predictor found
 		return Prediction24Hours.EMPTY;
+	}
+
+	@Override
+	public CompletableFuture<? extends JsonrpcResponseSuccess> handleJsonrpcRequest(User user, JsonrpcRequest request)
+			throws OpenemsNamedException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
