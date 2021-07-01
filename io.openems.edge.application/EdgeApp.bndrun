@@ -150,7 +150,8 @@
 	bnd.identity;version='latest';id='io.openems.edge.weather.weewx',\
 	bnd.identity;version='latest';id='io.openems.edge.predictor.dwd',\
 	bnd.identity;version='latest';id='io.openems.edge.summary',\
-	bnd.identity;version='latest';id='io.openems.edge.controller.api'
+	bnd.identity;version='latest';id='io.openems.edge.controller.api',\
+	bnd.identity;version='latest';id='io.openems.edge.controller.roller.shelly'
 		
 -runbundles: \
 	Java-WebSocket;version='[1.5.2,1.5.3)',\
@@ -324,5 +325,6 @@
 	io.openems.edge.predictor.openweather;version=snapshot,\
 	io.openems.edge.weather.weewx;version=snapshot,\
 	io.openems.edge.predictor.dwd;version=snapshot,\
-	io.openems.edge.summary;version=snapshot
+	io.openems.edge.summary;version=snapshot,\
+	io.openems.edge.controller.roller.shelly;version=snapshot
 -resolve: manual
