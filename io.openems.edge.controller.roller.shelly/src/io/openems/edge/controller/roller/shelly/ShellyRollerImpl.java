@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -57,6 +58,10 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 	private JsonArray jsonStatus = null;
 	private boolean summerMode = false;
 	private boolean debugMode = false;
+	private String httpAlmanac = "";
+	private openMode almanacMode = null;
+	private LocalTime openTime = null;
+	private LocalTime closeTime = null;
 
 	public ShellyRollerImpl() {
 		super(//
@@ -76,6 +81,8 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 		this.ipAddresses = config.ipAddresses();
 		this.openPos = config.openPos();
 		this.closePos = config.closePos();
+		this.httpAlmanac = config.httpAlmanac();
+		this.almanacMode = config.almanacMode();
 		
 		this.duration = new double[config.durationTime().length];
 		for (int i=0; i<config.durationTime().length; i++) {
@@ -101,6 +108,7 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 		switch (event.getTopic()) {
 		case EdgeEventConstants.TOPIC_CYCLE_BEFORE_PROCESS_IMAGE:
 			try {
+				this.getOpenCloseTime();
 				this.stateMachine();
 			} catch (OpenemsNamedException e) {
 				this.debugLog(e.getMessage());
@@ -132,6 +140,46 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 	
 	private BooleanWriteChannel getOpenRollerChannel() {
 		return this.channel(ShellyRoller.ChannelId.OPENROLLER);
+	}
+	
+	private void getOpenCloseTime() throws OpenemsNamedException {
+		if (this.almanacMode != openMode.EXTERNAL) {
+			String result = this.sendRequest_String(this.httpAlmanac, "GET");
+			try {
+				String sunrise = "";
+				String sunset = "";
+				if (this.almanacMode == openMode.SUNRISE_SUNSET) {
+					int indexSunrise = result.indexOf("<i class=\"wi wi-sunrise mr-1\" style=\"opacity: .75\"></i> ") + 56;
+					int indexSunset= result.indexOf("<i class=\"wi wi-sunset mr-1\" style=\"opacity: .75\"></i> ") + 55;
+					sunrise = result.substring(indexSunrise, indexSunrise + 8);
+					sunset = result.substring(indexSunset, indexSunset + 8);
+				}
+				else if (this.almanacMode == openMode.TWILIGHT) {
+					int indexSunrise = result.indexOf("\"Start civil twilight\">") + 23;
+					int indexSunset= result.indexOf("\"End civil twilight\">") + 21;
+					sunrise = result.substring(indexSunrise, indexSunrise + 8);
+					sunset = result.substring(indexSunset, indexSunset + 8);
+				}
+				this.openTime = LocalTime.parse(sunrise);
+				this.closeTime = LocalTime.parse(sunset);				
+
+				LocalTime now = LocalTime.now();
+				if (now.isBefore(this.openTime) && now.isBefore(this.closeTime)) {
+					getOpenRollerChannel().setNextValue(false);
+				}
+				else if (now.isAfter(this.openTime) && now.isBefore(this.closeTime)) {
+					getOpenRollerChannel().setNextValue(true);
+				}
+				else if (now.isAfter(this.openTime) && now.isAfter(this.closeTime)) {
+					getOpenRollerChannel().setNextValue(false);
+				}		
+				this.debugLog("OPENROLLER = " + getOpenRollerChannel().getNextValue().toString() + " | openTime: " + sunrise + " | closeTime: " + sunset);
+				
+			} catch (Exception e) {
+				this.openTime = null;
+				this.closeTime = null;
+			}			
+		}		
 	}
 
 	private void stateMachine() throws OpenemsNamedException {
@@ -387,6 +435,46 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 	      "Unable to read from shelly API. " + e.getClass().getSimpleName() + ": " + e.getMessage() + " | Check calibration of roller");
 	   }
 	  }
+	  
+	  /**
+	   * Sends a get or set request to the shelly API.
+	   *
+	   * @param endpoint the REST Api endpoint
+	   * @return a String
+	   * @throws OpenemsNamedException on error
+	   */
+	  private String sendRequest_String(String urlString, String requestMethod) 
+	      throws OpenemsNamedException {
+	    try {
+	      URL url = new URL(urlString);
+	      HttpURLConnection con = (HttpURLConnection) url.openConnection();
+	      con.setRequestMethod(requestMethod);
+	      con.setConnectTimeout(5000);
+	      con.setReadTimeout(5000);
+	      int status = con.getResponseCode();
+	      String body;
+	      try (BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+	        // Read HTTP response
+	    StringBuilder content = new StringBuilder();
+	    String line;
+	    while ((line = in.readLine()) != null) {
+	      content.append(line);
+	      content.append(System.lineSeparator());
+	    }
+	    body = content.toString();
+	  }
+	  if (status < 300) {
+	    // Parse response to JSON
+	    return body;
+	  } else {
+	    throw new OpenemsException(
+	        "Error while reading from shelly API. Response code: " + status + ". " + body);
+	  }
+	} catch (OpenemsNamedException | IOException e) {
+	  throw new OpenemsException(
+	      "Unable to read from shelly API. " + e.getClass().getSimpleName() + ": " + e.getMessage() + " | Check calibration of roller");
+	   }
+	  }
 	
 	private class rollerStatus{
 		boolean posReached = false;
@@ -394,6 +482,7 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 		boolean overtemp = false;
 		boolean safety_switch = false;
 	}
+	
 
   /**
   * Debug Log.

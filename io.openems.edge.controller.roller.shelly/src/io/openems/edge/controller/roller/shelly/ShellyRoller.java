@@ -26,5 +26,9 @@ public interface ShellyRoller extends OpenemsComponent {
 			return this.doc;
 		}
 	}
+	
+	public enum openMode{
+		EXTERNAL, SUNRISE_SUNSET, TWILIGHT
+	}
 
 }
