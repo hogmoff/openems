@@ -32,6 +32,15 @@ public @interface Config {
 	@AttributeDefinition(name = "Summer mode?", description = "Summer mode enabled? If yes than only slats will be opened")
 	boolean summerMode() default true;
 	
+	@AttributeDefinition(name = "Min Temperature Automatic 1h", description = "Min Temperature where slats are opened (=summerMode)")
+	int minTempForSummerMode1h() default 15;
+	
+	@AttributeDefinition(name = "Min Temperature Automatic Today", description = "Min Temperature where slats are opened (=summerMode)")
+	int minTempForSummerModeToday() default 20;
+	
+	@AttributeDefinition(name = "ChannelAdrdess Predict Temperature", description = "ChannelAddress for Predict Temperature in Automatic Mode")
+	String predictorChannelAddress() default "weather0/Predict_Temperature";
+	
 	@AttributeDefinition(name = "Time to open slats", description = "Duration-time to open slats for every roller in seconds")
 	String[] durationTime() default {"0.7", "0.7", "0.7"};
 	

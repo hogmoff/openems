@@ -26,6 +26,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import io.openems.common.exceptions.OpenemsException;
+import io.openems.common.types.ChannelAddress;
 import io.openems.common.exceptions.OpenemsError.OpenemsNamedException;
 import io.openems.common.utils.JsonUtils;
 import io.openems.edge.common.channel.BooleanWriteChannel;
@@ -33,6 +34,8 @@ import io.openems.edge.common.component.AbstractOpenemsComponent;
 import io.openems.edge.common.component.ComponentManager;
 import io.openems.edge.common.component.OpenemsComponent;
 import io.openems.edge.common.event.EdgeEventConstants;
+import io.openems.edge.predictor.api.manager.PredictorManager;
+import io.openems.edge.predictor.api.oneday.Prediction24Hours;
 
 @Designate(ocd = Config.class, factory = true)
 @Component(//
@@ -50,6 +53,8 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 
 	@Reference
 	protected ComponentManager componentManager;
+	
+	private Config config;
 
 	private String[] ipAddresses = null;
 	private int openPos = 0;
@@ -62,6 +67,10 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 	private openMode almanacMode = null;
 	private LocalTime openTime = null;
 	private LocalTime closeTime = null;
+	private int minTempForSummerMode1h;
+	private int minTempForSummerModeToday;
+	private String predictorChannelAddress;
+	private PredictorManager predictorManager;
 
 	public ShellyRollerImpl() {
 		super(//
@@ -75,7 +84,8 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 		super.activate(context, config.id(), config.alias(), config.enabled());
 		if (config.durationTime().length != config.ipAddresses().length) {
 			throw new OpenemsException("ipAddresses and duration have to be the same length!");
-		}		
+		}	
+		this.config = config;
 		this.debugMode = config.debugMode();
 		this.summerMode = config.summerMode();
 		this.ipAddresses = config.ipAddresses();
@@ -88,6 +98,11 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 		for (int i=0; i<config.durationTime().length; i++) {
 			this.duration[i] = Double.valueOf(config.durationTime()[i]);
 		}
+		this.predictorChannelAddress = this.config.predictorChannelAddress();
+		this.minTempForSummerMode1h = this.config.minTempForSummerMode1h();
+		this.minTempForSummerModeToday = this.config.minTempForSummerModeToday();
+		
+		this.predictorManager = this.componentManager.getComponent("_predictorManager");
 	}
 
 	@Deactivate
@@ -144,42 +159,104 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 	
 	private void getOpenCloseTime() throws OpenemsNamedException {
 		if (this.almanacMode != openMode.EXTERNAL) {
-			String result = this.sendRequest_String(this.httpAlmanac, "GET");
+			String result = this.sendRequest_String(this.httpAlmanac, "GET");		
 			try {
 				String sunrise = "";
 				String sunset = "";
-				if (this.almanacMode == openMode.SUNRISE_SUNSET) {
+				if (this.almanacMode == openMode.SUNRISE_SUNSET || this.almanacMode == openMode.AUTOMATIC_SUNRISE_SUNSET) {
 					int indexSunrise = result.indexOf("<i class=\"wi wi-sunrise mr-1\" style=\"opacity: .75\"></i> ") + 56;
 					int indexSunset= result.indexOf("<i class=\"wi wi-sunset mr-1\" style=\"opacity: .75\"></i> ") + 55;
 					sunrise = result.substring(indexSunrise, indexSunrise + 8);
 					sunset = result.substring(indexSunset, indexSunset + 8);
 				}
-				else if (this.almanacMode == openMode.TWILIGHT) {
+				else if (this.almanacMode == openMode.TWILIGHT || this.almanacMode == openMode.AUTOMATIC_TWILIGHT) {
 					int indexSunrise = result.indexOf("\"Start civil twilight\">") + 23;
 					int indexSunset= result.indexOf("\"End civil twilight\">") + 21;
 					sunrise = result.substring(indexSunrise, indexSunrise + 8);
 					sunset = result.substring(indexSunset, indexSunset + 8);
 				}
 				this.openTime = LocalTime.parse(sunrise);
-				this.closeTime = LocalTime.parse(sunset);				
-
+				this.closeTime = LocalTime.parse(sunset);	
 				LocalTime now = LocalTime.now();
+				Integer maxTemp1h = null;
+				Integer maxTempToday = null;
+				
 				if (now.isBefore(this.openTime) && now.isBefore(this.closeTime)) {
 					getOpenRollerChannel().setNextValue(false);
 				}
 				else if (now.isAfter(this.openTime) && now.isBefore(this.closeTime)) {
-					getOpenRollerChannel().setNextValue(true);
+					if (this.almanacMode == openMode.AUTOMATIC_SUNRISE_SUNSET || this.almanacMode == openMode.AUTOMATIC_TWILIGHT) {
+						summerModeResult r = setAutoSummerMode(now, this.closeTime);
+						this.summerMode = r.summerMode;
+						maxTemp1h = r.maxTemp1h;
+						maxTempToday = r.maxTempToday;
+						getOpenRollerChannel().setNextValue(true);						
+					}
+					else {
+						getOpenRollerChannel().setNextValue(true);
+					}
 				}
 				else if (now.isAfter(this.openTime) && now.isAfter(this.closeTime)) {
 					getOpenRollerChannel().setNextValue(false);
 				}		
-				this.debugLog("OPENROLLER = " + getOpenRollerChannel().getNextValue().toString() + " | openTime: " + sunrise + " | closeTime: " + sunset);
+				this.debugLog("OPENROLLER = " + getOpenRollerChannel().getNextValue().toString()
+						+ " | summerMode = " + this.summerMode + " | predict max Temp 1h = " + maxTemp1h + "°C"
+						+ " | predict max Temp Today = " + maxTempToday + "°C"
+						+ " | openTime: " + sunrise + " | closeTime: " + sunset);
+				
 				
 			} catch (Exception e) {
 				this.openTime = null;
 				this.closeTime = null;
 			}			
-		}		
+		} 
+			
+			
+	}
+	
+	private summerModeResult setAutoSummerMode(LocalTime now, LocalTime closeTime) throws OpenemsNamedException {
+		ChannelAddress c = ChannelAddress.fromString(this.predictorChannelAddress);
+		Prediction24Hours weatherPredict = this.predictorManager.get24HoursPrediction(c);
+		boolean weatherPredictOk = true;	
+		summerModeResult r = new summerModeResult(Integer.MIN_VALUE, Integer.MIN_VALUE, false);
+		Integer[] weather = weatherPredict.getValues();
+		LocalTime time = now;
+		LocalTime time1h = time.plusHours(1);
+		for (int i=0; i<weather.length; i++) {
+			if (weather[i] == null) {
+				weatherPredictOk = false;				
+				break;
+			}
+			if ((time.isBefore(time1h) || time.equals(time1h)) && weather[i] > r.maxTemp1h) {
+				r.maxTemp1h = weather[i];
+			}
+			if ((time.isBefore(closeTime) || time.equals(closeTime)) && weather[i] > r.maxTempToday) {
+				r.maxTempToday = weather[i];
+			}
+			if (time.isAfter(closeTime)) {
+				break;
+			}
+			time = time.plusMinutes(15);
+		}
+		
+		if (weatherPredictOk) {
+			if (r.maxTemp1h >= this.minTempForSummerMode1h 
+					|| r.maxTempToday >= this.minTempForSummerModeToday) {
+				r.summerMode = true;
+				return r;
+			}
+			else {
+				r.summerMode = false;
+				r.maxTemp1h = null;
+				r.maxTempToday = null;
+				return r;
+			}
+		}
+		else {
+			// switch to sunrise_sunset or twilight mode
+			r.summerMode = this.config.summerMode();
+			return r;
+		}
 	}
 
 	private void stateMachine() throws OpenemsNamedException {
@@ -481,6 +558,18 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 		boolean stateStop = false;
 		boolean overtemp = false;
 		boolean safety_switch = false;
+	}
+	
+	private class summerModeResult {
+	   public Integer maxTemp1h;
+	   public Integer maxTempToday;
+	   public boolean summerMode;
+	
+	   public summerModeResult(Integer maxTemp1h, Integer maxTempToday, boolean summerMode) {
+	      this.maxTemp1h = maxTemp1h;
+	      this.maxTempToday = maxTempToday;
+	      this.summerMode = summerMode;
+	   }
 	}
 	
 
