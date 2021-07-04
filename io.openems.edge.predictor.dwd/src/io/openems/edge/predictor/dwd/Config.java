@@ -17,6 +17,9 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 	@AttributeDefinition(name = "Is enabled?", description = "Is this Component enabled?")
 	boolean enabled() default true;
 	
+	@AttributeDefinition(name = "Debug mode enabled?", description = "Show debug messages?")
+	boolean debugMode() default true;
+	
 	@AttributeDefinition(name = "Link to MOXMIX_L-kmz-File", description = "Link to opendata.dwd.de")
 	String kmzFile() default "";
 	

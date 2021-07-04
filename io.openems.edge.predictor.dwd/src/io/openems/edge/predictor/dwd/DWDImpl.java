@@ -58,7 +58,8 @@ import io.openems.edge.predictor.api.oneday.Predictor24Hours;
 public class DWDImpl extends AbstractPredictor24Hours implements Predictor24Hours, OpenemsComponent, EventHandler {
 
 	private final Logger log = LoggerFactory.getLogger(DWDImpl.class);
-	private boolean executed;	
+	private boolean executed;
+	private boolean debugMode;
 	private String File;
 	List<LocalDateTime> TimeSteps = new ArrayList<>();
 	List<Integer> Temperature = new ArrayList<>();
@@ -82,6 +83,7 @@ public class DWDImpl extends AbstractPredictor24Hours implements Predictor24Hour
 	void activate(ComponentContext context, Config config) throws OpenemsNamedException {
 		super.activate(context, config.id(), config.alias(), config.enabled(), config.channelAddresses());
 		this.File = config.kmzFile();
+		this.debugMode = config.debugMode();
 	}
 
 	@Deactivate
@@ -142,8 +144,12 @@ public class DWDImpl extends AbstractPredictor24Hours implements Predictor24Hour
 				this.channel(DWD.ChannelId.UNABLE_TO_PREDICT).setNextValue(false);				
 			} catch (OpenemsNamedException e) {
 				this.logError(this.log, e.getMessage());
+				this.channel(DWD.ChannelId.TEMPERATURE).setNextValue(null);
+				this.channel(DWD.ChannelId.CLOUDS).setNextValue(null);
 				this.channel(DWD.ChannelId.UNABLE_TO_PREDICT).setNextValue(true);
 			}
+			this.debugLog("Temperature: " + this.channel(DWD.ChannelId.TEMPERATURE).value().toString() + " "
+			  + " | Clouds: " +	this.channel(DWD.ChannelId.CLOUDS).value().toString());
 		}
 	}
 	
@@ -304,11 +310,16 @@ public class DWDImpl extends AbstractPredictor24Hours implements Predictor24Hour
 		return values;		
 	}
 	
-	
-	@Override
-	public String debugLog() {
-		return "Temperature: " + this.channel(DWD.ChannelId.TEMPERATURE).value().toString() + " " +
-				" | Clouds: " +	this.channel(DWD.ChannelId.CLOUDS).value().toString();
+	/**
+	* Debug Log.
+	* 
+	*<p>Logging only if the debug mode is enabled
+	* 
+	* @param message text that should be logged
+	*/
+	public void debugLog(String message) {
+		if (this.debugMode) {
+			this.logInfo(this.log, message);
+	    }
 	}
-
 }
