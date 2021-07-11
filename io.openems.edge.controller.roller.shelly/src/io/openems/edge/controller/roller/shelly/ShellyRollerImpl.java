@@ -62,6 +62,7 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 	private double[] duration = null;
 	private JsonArray jsonStatus = null;
 	private boolean summerMode = false;
+	private boolean summerModePrev = false;
 	private boolean debugMode = false;
 	private String httpAlmanac = "";
 	private openMode almanacMode = null;
@@ -88,6 +89,7 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 		this.config = config;
 		this.debugMode = config.debugMode();
 		this.summerMode = config.summerMode();
+		this.summerModePrev = this.summerMode;
 		this.ipAddresses = config.ipAddresses();
 		this.openPos = config.openPos();
 		this.closePos = config.closePos();
@@ -125,6 +127,7 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 			try {
 				this.getOpenCloseTime();
 				this.stateMachine();
+				this.summerModePrev = this.summerMode;
 			} catch (OpenemsNamedException e) {
 				this.debugLog(e.getMessage());
 			}
@@ -189,7 +192,7 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 						summerModeResult r = setAutoSummerMode(now, this.closeTime);
 						this.summerMode = r.summerMode;
 						maxTemp1h = r.maxTemp1h;
-						maxTempToday = r.maxTempToday;
+						maxTempToday = r.maxTempToday;						
 						getOpenRollerChannel().setNextValue(true);						
 					}
 					else {
@@ -374,11 +377,17 @@ public class ShellyRollerImpl extends AbstractOpenemsComponent implements Shelly
 			if (!openRoller) {
 				this.state = State.SET_RUNNING_DOWN;
 			}
+			else if (openRoller && this.summerMode != this.summerModePrev) {
+				this.state = State.SET_RUNNING_UP;
+			}
 			break;
 			
 		case ROLLER_CLOSED:
 			if (openRoller) {
 				this.state = State.SET_RUNNING_UP;
+			}
+			else if (!openRoller && this.summerMode != this.summerModePrev) {
+				this.state = State.SET_RUNNING_DOWN;
 			}
 			break;
 			
